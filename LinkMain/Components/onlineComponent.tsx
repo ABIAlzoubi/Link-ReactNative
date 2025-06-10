@@ -54,8 +54,8 @@ container: {
   },
   NameText:{
     fontSize:12,
-    fontWeight:'bold',
     maxWidth:screenWidth * 0.15,
     textAlign:'center',
+    color:'gray',
   },
 });
