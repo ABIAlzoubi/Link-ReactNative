@@ -7,17 +7,18 @@ import {
     Text,
     View,
     Alert,
+    FlatList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ChatListComponent from '../Components/chatListComponent';
+import OnlineComponent from '../Components/onlineComponent';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import LottieView from 'lottie-react-native';
-
-const HomeScreen = () =>{
-    // const screenHeight = Dimensions.get('window').height;
+// const screenHeight = Dimensions.get('window').height;
     const screenWidth = Dimensions.get('window').width;
-    const [playLootie,setPlayLootie] = useState(false);
+const HomeScreen = () =>{
 
+    const [playLootie,setPlayLootie] = useState(false);
 
 
     const [chats, setChats] = useState([
@@ -47,6 +48,19 @@ const HomeScreen = () =>{
 
   return(
     <SafeAreaView style={styles.safeArea}>
+        <FlatList
+          data={chats}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({}) => (
+              <TouchableOpacity
+                  activeOpacity={1} onPress={() => {}}>
+                  <OnlineComponent/>
+              </TouchableOpacity>
+          )}
+          horizontal
+          style={styles.onlineList}
+        />
+
         <SwipeListView
         data={chats}
         keyExtractor={(item) => item.id.toString()}
@@ -127,6 +141,10 @@ const styles = StyleSheet.create({
   backTextWhite: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  onlineList:{
+    height: screenWidth * 0.3,
+    width:'100%',
   },
 });
 
