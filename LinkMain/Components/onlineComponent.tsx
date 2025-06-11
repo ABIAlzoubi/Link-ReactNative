@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
 container: {
     height: screenHeight * 0.09,
     backgroundColor:'#fff',
-    paddingLeft:screenWidth * 0.035,
+    paddingLeft:screenWidth * 0.03,
     display:'flex',
     flexDirection:'column',
     alignItems:'center',

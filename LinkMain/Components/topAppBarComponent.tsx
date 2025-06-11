@@ -1,9 +1,11 @@
+/* eslint-disable jsx-quotes */
 import React from 'react';
 import {
     Dimensions,
     View,
     StyleSheet,
     Text,
+    TextInput,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -16,8 +18,11 @@ const topAppBar = () => {
         <View style={styles.AppBar}>
             <View style={styles.container}>
                 <Text style={styles.Title}>Link</Text>
+                <View style={styles.SearchContainer}>
+                    <TextInput numberOfLines={1} multiline={false} placeholderTextColor={'gray'} placeholder='Search...' style={styles.searchInput}/>
+                    <Icon name="search" size={18} color="gray" />
+                </View>
             </View>
-            <Icon name="search" size={30} color="#900" />
         </View>
     );
 };
@@ -25,23 +30,48 @@ export default topAppBar;
 
 const styles = StyleSheet.create({
     AppBar:{
-    height: screenHeight * 0.1,
+    height: screenHeight * 0.07,
     width: screenWidth,
-    backgroundColor:'red',
     display:'flex',
     alignItems:'center',
-    borderColor:'#edebeb',
-    borderBottomWidth:1,
+    marginBottom:screenWidth * 0.01,
+    paddingHorizontal:screenWidth * 0.02,
 },
 container:{
-    height:'50%',
+    height:'100%',
     width:'100%',
     display:'flex',
     flexDirection:'row',
     justifyContent:'space-between',
+    alignItems:'center',
 },
 Title:{
-    fontSize:25,
-    fontWeight:'bold',
+    fontSize:screenWidth * 0.11,
+    fontWeight: 'bold',
+    fontStyle: 'italic',
+},
+SearchContainer:{
+    height:screenWidth * 0.11,
+    width:'77%',
+    minWidth:'77%',
+    maxWidth:'77%',
+    display:'flex',
+    flexDirection:'row',
+    alignItems:'center',
+    justifyContent:'space-between',
+    borderColor:'lightgray',
+    borderWidth:1,
+    borderRadius:999,
+    padding:0,
+    paddingHorizontal:screenWidth * 0.03,
+},
+searchInput:{
+    fontSize:13,
+    maxWidth:'95%',
+    minWidth:'95%',
+    width:'95%',
+    height:'100%',
+    color:'black',
+    writingDirection: 'auto',
 },
 });
