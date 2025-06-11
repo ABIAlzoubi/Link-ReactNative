@@ -10,8 +10,13 @@ import {
     FlatList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+
 import ChatListComponent from '../Components/chatListComponent';
 import OnlineComponent from '../Components/onlineComponent';
+import TopAppBar from '../Components/topAppBarComponent';
+
+
 import { SwipeListView } from 'react-native-swipe-list-view';
 import LottieView from 'lottie-react-native';
 // const screenHeight = Dimensions.get('window').height;
@@ -48,6 +53,9 @@ const HomeScreen = () =>{
 
   return(
     <SafeAreaView style={styles.safeArea}>
+
+        <TopAppBar/>
+
         <FlatList
           data={chats}
           keyExtractor={(item) => item.id.toString()}
@@ -113,7 +121,7 @@ const HomeScreen = () =>{
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-     safeArea: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#fff',
   },
