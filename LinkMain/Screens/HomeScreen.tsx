@@ -15,11 +15,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ChatListComponent from '../Components/chatListComponent';
 import OnlineComponent from '../Components/onlineComponent';
 import TopAppBar from '../Components/topAppBarComponent';
-
+import BottomAppbar from '../Components/bottomAppBar';
 
 import { SwipeListView } from 'react-native-swipe-list-view';
 import LottieView from 'lottie-react-native';
-// const screenHeight = Dimensions.get('window').height;
+const screenHeight = Dimensions.get('window').height;
     const screenWidth = Dimensions.get('window').width;
 const HomeScreen = () =>{
 
@@ -41,9 +41,10 @@ const HomeScreen = () =>{
         { id: 12, name: 'Bassam Layla' },
     ]);
 
+    const lastIndex = chats.length - 1;
+
     const handleDelete = (item:number) => {
         setChats((prev) => prev.filter((chat) => chat.id !== item));
-
     };
 
     const handleArchive = (item:number) => {
@@ -53,7 +54,7 @@ const HomeScreen = () =>{
 
   return(
     <SafeAreaView style={styles.safeArea}>
-
+        <>
         <TopAppBar/>
 
         <FlatList
@@ -72,9 +73,11 @@ const HomeScreen = () =>{
         <SwipeListView
         data={chats}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
+
+        renderItem={({ item,index }) => (
+
             <TouchableOpacity
-                activeOpacity={1} onPress={() => {}}>
+                activeOpacity={1} onPress={() => {}} style={{ marginBottom: lastIndex === index ? (screenHeight * 0.055) : 0 }}>
                 <ChatListComponent chat={item} />
             </TouchableOpacity>
         )}
@@ -114,6 +117,8 @@ const HomeScreen = () =>{
         onRowOpen={() => setPlayLootie(true)}
         onRowDidOpen={() => setPlayLootie(false)}
       />
+      <BottomAppbar/>
+      </>
     </SafeAreaView>
     );
 };
