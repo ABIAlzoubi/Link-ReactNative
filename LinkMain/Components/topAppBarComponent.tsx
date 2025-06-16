@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {colors} from '../Utils/values';
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
@@ -19,8 +20,8 @@ const topAppBar = () => {
             <View style={styles.container}>
                 <Text style={styles.Title}>Link</Text>
                 <View style={styles.SearchContainer}>
-                    <TextInput numberOfLines={1} multiline={false} placeholderTextColor={'gray'} placeholder='Search...' style={styles.searchInput}/>
-                    <Icon name="search" size={18} color="gray" />
+                    <TextInput numberOfLines={1} multiline={false} placeholderTextColor={colors.TextColor} placeholder='Search...' style={styles.searchInput}/>
+                    <Icon name="search" size={18} color={colors.primaryColor} />
                 </View>
             </View>
         </View>
@@ -49,6 +50,7 @@ Title:{
     fontSize:screenWidth * 0.11,
     fontWeight: 'bold',
     fontStyle: 'italic',
+    color: colors.primaryColor,
 },
 SearchContainer:{
     height:screenWidth * 0.11,

@@ -4,7 +4,6 @@ import {
     Dimensions,
     StyleSheet,
     TouchableOpacity,
-    Text,
     View,
     Alert,
     FlatList,
@@ -58,7 +57,7 @@ const HomeScreen = () =>{
 
   return(
     <SafeAreaView style={styles.safeArea}>
-        <>
+
         <TopAppBar/>
 
         <FlatList
@@ -78,10 +77,10 @@ const HomeScreen = () =>{
         data={chats}
         keyExtractor={(item) => item.id.toString()}
 
-        renderItem={({ item,index }) => (
+        renderItem={({ item }) => (
 
             <TouchableOpacity
-                activeOpacity={1} onPress={() => {}} style={{ marginBottom: lastIndex === index ? (screenHeight * 0.055) : 0 }}>
+                activeOpacity={1} onPress={() => {}} >
                 <ChatListComponent chat={item} />
             </TouchableOpacity>
         )}
@@ -90,10 +89,15 @@ const HomeScreen = () =>{
         renderHiddenItem={({item,index}) => (
         <View style={styles.rowBack}>
             <TouchableOpacity
-                style={[styles.backLeftBtn, styles.backBtn ,{ marginBottom: lastIndex === index ? (screenHeight * 0.0627) : 0 }]}
+                style={[styles.backLeftBtn, styles.backBtn ,{ marginBottom: lastIndex === index ? (screenHeight * 0.0646) : 0 }]}
                 onPress={() => handleArchive(item.id)}
             >
-            <Text style={styles.backTextWhite}>Archive</Text>
+            <LottieView
+                source={require('../Assets/Animations/trashAnimation.json')}
+                autoPlay = {playLootie}
+                loop={false}
+                style={{ width: 80, height: 80 }}
+            />
             </TouchableOpacity>
 
 
@@ -102,7 +106,7 @@ const HomeScreen = () =>{
                 onPress={() => handleDelete(item.id)}
             >
             <LottieView
-                source={require('../Assets/Animations/trashAnimation.json')} // your animation file
+                source={require('../Assets/Animations/trashAnimation.json')}
                 autoPlay = {playLootie}
                 loop={false}
                 style={{ width: 80, height: 80 }}
@@ -120,9 +124,9 @@ const HomeScreen = () =>{
         closeOnRowPress={true}
         onRowOpen={() => setPlayLootie(true)}
         onRowDidOpen={() => setPlayLootie(false)}
+        contentContainerStyle={{ paddingBottom: screenHeight * 0.05 }}
       />
       <BottomAppbar/>
-      </>
     </SafeAreaView>
     );
 };
