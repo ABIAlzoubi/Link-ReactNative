@@ -20,12 +20,13 @@ import BottomAppbar from '../Components/bottomAppBar';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import LottieView from 'lottie-react-native';
 const screenHeight = Dimensions.get('window').height;
-    const screenWidth = Dimensions.get('window').width;
+const screenWidth = Dimensions.get('window').width;
+
+
+
 const HomeScreen = () =>{
 
     const [playLootie,setPlayLootie] = useState(false);
-
-
     const [chats, setChats] = useState([
         { id: 1, name: 'Anas Bassam' },
         { id: 2, name: 'Sara Ali' },
@@ -40,15 +41,18 @@ const HomeScreen = () =>{
         { id: 11, name: 'Bassam Layla' },
         { id: 12, name: 'Bassam Layla' },
     ]);
+    const [lastIndex,setLastIndex] = useState(chats.length - 1);
 
-    const lastIndex = chats.length - 1;
+
 
     const handleDelete = (item:number) => {
         setChats((prev) => prev.filter((chat) => chat.id !== item));
+        setLastIndex(chats.length - 1);
     };
 
     const handleArchive = (item:number) => {
          Alert.alert('Archived', `Chat ${item} archived`);
+         setLastIndex(chats.length - 1);
     };
 
 
@@ -83,10 +87,10 @@ const HomeScreen = () =>{
         )}
 
 
-        renderHiddenItem={({item}) => (
+        renderHiddenItem={({item,index}) => (
         <View style={styles.rowBack}>
             <TouchableOpacity
-                style={[styles.backLeftBtn, styles.backBtn]}
+                style={[styles.backLeftBtn, styles.backBtn ,{ marginBottom: lastIndex === index ? (screenHeight * 0.0627) : 0 }]}
                 onPress={() => handleArchive(item.id)}
             >
             <Text style={styles.backTextWhite}>Archive</Text>
@@ -94,7 +98,7 @@ const HomeScreen = () =>{
 
 
             <TouchableOpacity
-                style={[styles.backRightBtn, styles.backBtn]}
+                style={[styles.backRightBtn, styles.backBtn ,{ marginBottom: lastIndex === index ? (screenHeight * 0.0627) : 0 }]}
                 onPress={() => handleDelete(item.id)}
             >
             <LottieView
