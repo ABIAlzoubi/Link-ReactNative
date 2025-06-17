@@ -16,7 +16,7 @@ const bottmNavWedth = dimensions.screenWidth;
 
 
 
-const BottomAppbar = ({ state, descriptors, navigation }) => {
+const BottomAppbar = ({ state,navigation }) => {
 
     return (
         <View style={styles.container}>
