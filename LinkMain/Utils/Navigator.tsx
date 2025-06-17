@@ -1,19 +1,51 @@
+/* eslint-disable react/no-unstable-nested-components */
+// MainNavigator.tsx
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import ChatsScreen from '../Screens/HomeScreen';
+import ContactsScreen from '../Screens/ContactsScreen';
+import ProfileScreen from '../Screens/ProfileScreen';
+
+import BottomAppbar from '../Components/bottomAppBar';
+
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+const Tab = createBottomTabNavigator();
+
+export default function MyTabs() {
+  return (
+    <Tab.Navigator tabBar={props => <BottomAppbar {...props} />} initialRouteName="Chats">
+
+    <Tab.Screen
+        name="Contacts"
+        component={ContactsScreen}
+        options={{
+            headerShown: false,
+            tabBarLabel: () => 'Contacts',
+            tabBarIcon: () => null,
+        }}
+    />
+
+    <Tab.Screen
+        name="Chats"
+        component={ChatsScreen}
+        options={{
+            headerShown: false,
+            tabBarLabel: () => 'Chats',
+            tabBarIcon: () => null,
+        }}
+    />
+
+    <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+            headerShown: false,
+            tabBarLabel: () => 'Profile',
+            tabBarIcon: () => null,
+        }}
+    />
 
 
-import HomeScreen from '../Screens/HomeScreen';
-import topAppBar from '../Components/topAppBarComponent';
-
-export default function MainNavigator() {
-    const Stack = createNativeStackNavigator();
-    return (
-    <NavigationContainer>
-        <Stack.Navigator>
-            <Stack.Screen name="Chats" component={HomeScreen} />
-            <Stack.Screen name="Home" component={topAppBar} />
-        </Stack.Navigator>
-    </NavigationContainer>
-    );
+    </Tab.Navigator>
+  );
 }
