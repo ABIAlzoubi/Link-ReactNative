@@ -8,12 +8,13 @@ import ProfileScreen from '../Screens/ProfileScreen';
 
 import BottomAppbar from '../Components/bottomAppBar';
 
+
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 const Tab = createBottomTabNavigator();
 
-export default function MyTabs() {
-  return (
-    <Tab.Navigator tabBar={props => <BottomAppbar {...props} />} initialRouteName="Chats">
+export default function BottomBarTabs() {
+return (
+    <Tab.Navigator tabBar={props => <BottomAppbar {...props} />} initialRouteName="Profile">
 
     <Tab.Screen
         name="Contacts"
@@ -45,7 +46,6 @@ export default function MyTabs() {
         }}
     />
 
-
     </Tab.Navigator>
-  );
+);
 }

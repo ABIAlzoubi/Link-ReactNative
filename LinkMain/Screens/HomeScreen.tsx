@@ -14,7 +14,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ChatListComponent from '../Components/chatListComponent';
 import OnlineComponent from '../Components/onlineComponent';
 import TopAppBar from '../Components/topAppBarComponent';
-//import BottomAppbar from '../Components/bottomAppBar';
 
 import { SwipeListView } from 'react-native-swipe-list-view';
 import LottieView from 'lottie-react-native';
@@ -124,7 +123,6 @@ const HomeScreen = () =>{
         onRowDidOpen={() => setPlayLootie(false)}
         contentContainerStyle={{ paddingBottom: screenHeight * 0.05 }}
       />
-      {/* <BottomAppbar/> */}
     </SafeAreaView>
     );
 };

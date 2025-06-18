@@ -13,9 +13,6 @@ const bottmNavHeight = dimensions.screenHeight * 0.075;
 const bottmNavWedth = dimensions.screenWidth;
 
 
-
-
-
 const BottomAppbar = ({ state,navigation }) => {
 
     return (
@@ -100,7 +97,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     UnselectedIcon: {
-        width: '15%',
+        width: '20%',
         height: '100%',
         paddingTop: '3%',
         alignItems: 'center',
