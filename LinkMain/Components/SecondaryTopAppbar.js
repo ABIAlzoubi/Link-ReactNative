@@ -37,7 +37,7 @@ const SecondaryTopAppbar = () =>{
             style={styles.titleContainer}
             onPress={()=>{navigation.navigate('Chats');}}
         >
-            <Text style={styles.iconTitle}>Save</Text>
+            <Text style={styles.iconTitle}>{routeName === 'Profile' ? 'Save' : routeName === 'Contacts' ? 'Done' : null}</Text>
         </TouchableOpacity>
     </View>
     );
