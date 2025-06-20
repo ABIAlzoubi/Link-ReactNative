@@ -24,14 +24,20 @@ const BottomSheetRenderdComponent: React.FC<Props> = ({ title, value , onDoneFun
       <View>
 
         <View style={styles.BottomSheetTitleContainer}>
-          <Text>{title}:</Text>
-          <Text>{value}</Text>
+          <Text style={styles.BottomSheetTitle}>{title}:</Text>
+          <Text style={styles.BottomSheetTitle}>{value}</Text>
         </View>
 
-        <TextInput placeholder={title} onChangeText={(val) => SetNewVal(val)}/>
+        <TextInput 
+          style={styles.BottomSheetInput}
+          placeholder={title}
+          placeholderTextColor={colors.primaryColor}
+          onChangeText={(val) => SetNewVal(val)}
+          returnKeyType="done"
+        />
 
-        <TouchableOpacity onPress={()=>{onDoneFun(newValue,title);}}>
-          <Text>Done</Text>
+        <TouchableOpacity style={styles.BottomSheetButton} onPress={()=>{onDoneFun(newValue,title);}}>
+          <Text style={styles.ButtonText}>Done</Text>
         </TouchableOpacity>
       </View>
     );
@@ -40,7 +46,7 @@ const BottomSheetRenderdComponent: React.FC<Props> = ({ title, value , onDoneFun
 
 const ProfileScreen = () => {
   const bottomSheetRef =  useRef<BottomSheetModal >(null);
-  const snapPoints = useMemo(() => ['25%', '50%' , '90%'], []);
+  const snapPoints = useMemo(() => ['25%', '30%' , '35%'], []);
 
   const [userName,setUserName] = useState('Undefined');
   const [phoneNumber,setPhoneNumber] = useState('Undefined');
@@ -48,6 +54,8 @@ const ProfileScreen = () => {
   const [password,setPassword] = useState('Undefined');
 
 
+  const [tempVal,setTempVal] = useState('Undefined');
+  const [temptitle,setTempTitle] = useState('Undefined');
 
   const openSheet = (title:string)=>{
     setTempTitle(title);
@@ -64,8 +72,6 @@ const ProfileScreen = () => {
     bottomSheetRef.current?.expand();
   };
 
-  const [tempVal,setTempVal] = useState('Undefined');
-  const [temptitle,setTempTitle] = useState('Undefined');
 
   const onDone = (value:string,title:string)=>{
     if(title === 'User Name')
@@ -76,6 +82,10 @@ const ProfileScreen = () => {
       {setEmail(value);}
     else if(title === 'Password')
       {setPassword(value);}
+
+    setTempVal('Undefined');
+    setTempTitle('Undefined');
+    bottomSheetRef.current?.close();
   };
 
 
@@ -217,9 +227,13 @@ const ProfileScreen = () => {
       </ScrollView>
       <BottomSheetModal
           ref={bottomSheetRef}
-          index={0}
+          index={-1}
           snapPoints={snapPoints}
           enablePanDownToClose
+          onClose={()=>{ setTempVal('Undefined'); setTempTitle('Undefined');}}
+          keyboardBehavior={'interactive'}
+          keyboardBlurBehavior="restore"
+          style={styles.BottomSheetContainer}
         >
           <BottomSheetView >
             <BottomSheetRenderdComponent title={temptitle} value={tempVal} onDoneFun={onDone}/>
@@ -320,9 +334,46 @@ const styles = StyleSheet.create({
     fontWeight:'bold',
     marginHorizontal:'2%',
   },
-  BottomSheetTitleContainer:{
+  BottomSheetContainer:{
     flex:1,
+    borderColor:'#edebeb',
+    borderRadius:16,
+    borderWidth:1,
+    elevation:5,
+    paddingHorizontal:'4%',
+  },
+  BottomSheetTitleContainer:{
+    width:'100%',
+    height:screenWidth * 0.118 ,
     flexDirection:'row',
+    color:colors.primaryColor,
+    borderBottomWidth:2,
+    borderColor:'#edebeb',
+    alignItems:'center',
+  },
+  BottomSheetTitle:{
+    color:colors.primaryColor,
+    fontSize:14,
+    fontWeight:'500',
+    marginRight:'2%',
+  },
+  BottomSheetInput:{
+    height:screenWidth * 0.118,
+    borderBottomWidth:2,
+    borderColor:'#edebeb',
+  },
+  BottomSheetButton:{
+    height:screenWidth * 0.118,
+    width:'50%',
+    flexDirection:'row',
+    justifyContent:'center',
+    alignItems:'center',
+    alignSelf:'center',
+    marginTop:'10%',
+    paddingVertical:'1%',
+    borderRadius:12,
+    backgroundColor:colors.primaryColor,
+    elevation:5,
   },
 });
 
