@@ -1,15 +1,86 @@
-import React from 'react';
+import React,{useRef,useMemo, useState} from 'react';
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SecondaryTopBar from '../Components/SecondaryTopAppbar';
 import { colors, dimensions } from '../Utils/values';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import BottomSheetModal , { BottomSheetView }  from '@gorhom/bottom-sheet';
+import { TextInput } from 'react-native-gesture-handler';
+
+
+type Props = {
+  title: string;
+  value: string;
+  onDoneFun: (value:string,title:string) => void;
+};
 
 const screenWidth = dimensions.screenWidth;
 const screenHeight = dimensions.screenHeight;
 
 
+const BottomSheetRenderdComponent: React.FC<Props> = ({ title, value , onDoneFun }) => {
+    const [newValue,SetNewVal] = useState(value);
+    return(
+      <View>
+
+        <View style={styles.BottomSheetTitleContainer}>
+          <Text>{title}:</Text>
+          <Text>{value}</Text>
+        </View>
+
+        <TextInput placeholder={title} onChangeText={(val) => SetNewVal(val)}/>
+
+        <TouchableOpacity onPress={()=>{onDoneFun(newValue,title);}}>
+          <Text>Done</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+
 const ProfileScreen = () => {
+  const bottomSheetRef =  useRef<BottomSheetModal >(null);
+  const snapPoints = useMemo(() => ['25%', '50%' , '90%'], []);
+
+  const [userName,setUserName] = useState('Undefined');
+  const [phoneNumber,setPhoneNumber] = useState('Undefined');
+  const [email,setEmail] = useState('Undefined');
+  const [password,setPassword] = useState('Undefined');
+
+
+
+  const openSheet = (title:string)=>{
+    setTempTitle(title);
+
+    if(title === 'User Name')
+      {setTempVal(userName);}
+    else if(title === 'Phone Number')
+      {setTempVal(phoneNumber);}
+    else if(title === 'Email')
+      {setTempVal(email);}
+    else if(title === 'Password')
+      {setTempVal(password);}
+
+    bottomSheetRef.current?.expand();
+  };
+
+  const [tempVal,setTempVal] = useState('Undefined');
+  const [temptitle,setTempTitle] = useState('Undefined');
+
+  const onDone = (value:string,title:string)=>{
+    if(title === 'User Name')
+      {setUserName(value);}
+    else if(title === 'Phone Number')
+      {setPhoneNumber(value);}
+    else if(title === 'Email')
+      {setEmail(value);}
+    else if(title === 'Password')
+      {setPassword(value);}
+  };
+
+
+
+
   return (
     <SafeAreaView style={styles.containe}>
       <SecondaryTopBar />
@@ -35,7 +106,11 @@ const ProfileScreen = () => {
 
           <View style={styles.infoContainer}>
 
-            <TouchableOpacity style={styles.SingleinfoContainer} activeOpacity={0.5}>
+            <TouchableOpacity
+              style={styles.SingleinfoContainer}
+              activeOpacity={0.5}
+              onPress={()=>{openSheet('User Name');}}
+            >
               <Text style={styles.infoText}>User Name</Text>
               <Icon
               name={'chevron-right'}
@@ -45,7 +120,11 @@ const ProfileScreen = () => {
             </TouchableOpacity>
 
 
-            <TouchableOpacity style={styles.SingleinfoContainer} activeOpacity={0.5}>
+            <TouchableOpacity
+              style={styles.SingleinfoContainer}
+              activeOpacity={0.5}
+              onPress={()=>{openSheet('Phone Number');}}
+            >
               <Text style={styles.infoText}>Phone Number</Text>
               <Icon
               name={'chevron-right'}
@@ -54,7 +133,11 @@ const ProfileScreen = () => {
             />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.SingleinfoContainer} activeOpacity={0.5}>
+            <TouchableOpacity
+              style={styles.SingleinfoContainer}
+              activeOpacity={0.5}
+              onPress={()=>{openSheet('Email');}}
+            >
               <Text style={styles.infoText}>Email</Text>
               <Icon
               name={'chevron-right'}
@@ -63,7 +146,11 @@ const ProfileScreen = () => {
             />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.SingleinfoContainer} activeOpacity={0.5}>
+            <TouchableOpacity
+              style={styles.SingleinfoContainer}
+              activeOpacity={0.5}
+              onPress={()=>{openSheet('Password');}}
+            >
               <Text style={styles.infoText}>Password</Text>
               <Icon
               name={'chevron-right'}
@@ -118,7 +205,7 @@ const ProfileScreen = () => {
         </View>
 
 
-        <TouchableOpacity style={styles.Logoutbutton} activeOpacity={0.5}>
+        <TouchableOpacity style={styles.Logoutbutton} activeOpacity={0.5} onPress={() => bottomSheetRef.current?.expand()}>
               <Text style={styles.ButtonText}>Log out</Text>
               <Icon
               name={'sign-out'}
@@ -127,9 +214,17 @@ const ProfileScreen = () => {
               />
         </TouchableOpacity>
 
-
-
       </ScrollView>
+      <BottomSheetModal
+          ref={bottomSheetRef}
+          index={0}
+          snapPoints={snapPoints}
+          enablePanDownToClose
+        >
+          <BottomSheetView >
+            <BottomSheetRenderdComponent title={temptitle} value={tempVal} onDoneFun={onDone}/>
+          </BottomSheetView>
+        </BottomSheetModal>
     </SafeAreaView>
   );
 };
@@ -224,6 +319,10 @@ const styles = StyleSheet.create({
     fontSize:13,
     fontWeight:'bold',
     marginHorizontal:'2%',
+  },
+  BottomSheetTitleContainer:{
+    flex:1,
+    flexDirection:'row',
   },
 });
 
