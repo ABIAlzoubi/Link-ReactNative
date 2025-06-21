@@ -31,6 +31,8 @@ const BottomSheetRenderdComponent: React.FC<Props> = ({ title, value , onAction 
     };
 
     return(
+
+      //Deleting Account Section
       title === 'Delete Account' ?
       <View>
         <View style={styles.WanringiconContainer}>
@@ -57,7 +59,15 @@ const BottomSheetRenderdComponent: React.FC<Props> = ({ title, value , onAction 
         </View>
       </View> :
 
+      //Dark Mood Section
+      title === 'Dark Mood' ?
+      <View>
+        <View style={styles.BottomSheetTitleContainer}>
+          <Text style={styles.BottomSheetTitle}>{title}</Text>
+        </View>
+      </View> :
 
+      //Data Section
       <View>
         <View style={styles.BottomSheetTitleContainer}>
           <Text style={styles.BottomSheetTitle}>{title}:</Text>
