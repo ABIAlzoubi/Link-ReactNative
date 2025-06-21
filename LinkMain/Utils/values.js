@@ -14,4 +14,5 @@ export const colors = {
     secondary:'#2C74B3',
     backgroundColor: '#fff',
     TextColor:'gray',
+    ErrorColor:'#e01102',
 };

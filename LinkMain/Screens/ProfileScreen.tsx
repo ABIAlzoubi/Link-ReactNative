@@ -1,5 +1,6 @@
-import React,{useRef,useMemo, useState} from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
+import React,{useRef, useState, useEffect} from 'react';
+import { Image, Keyboard, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SecondaryTopBar from '../Components/SecondaryTopAppbar';
 import { colors, dimensions } from '../Utils/values';
@@ -11,24 +12,59 @@ import { TextInput } from 'react-native-gesture-handler';
 type Props = {
   title: string;
   value: string;
-  onDoneFun: (value:string,title:string) => void;
+  onAction: (value:string,title:string) => void;
+  bottomSheetRef: React.RefObject<BottomSheetModal | null>;
 };
 
 const screenWidth = dimensions.screenWidth;
 const screenHeight = dimensions.screenHeight;
 
 
-const BottomSheetRenderdComponent: React.FC<Props> = ({ title, value , onDoneFun }) => {
+const BottomSheetRenderdComponent: React.FC<Props> = ({ title, value , onAction , bottomSheetRef}) => {
     const [newValue,SetNewVal] = useState(value);
-    return(
-      <View>
 
+    const onAccountDelete = () => {
+      bottomSheetRef.current?.close();
+    };
+    const onAccountNotDelete = () => {
+      bottomSheetRef.current?.close();
+    };
+
+    return(
+      title === 'Delete Account' ?
+      <View>
+        <View style={styles.WanringiconContainer}>
+          <Icon name={'times-circle-o'} size={65} color={colors.ErrorColor}/>
+        </View>
+
+        <View style={styles.WanringiconContainer}>
+          <Text style={[styles.BottomSheetTitle, {textAlign :'center',fontSize:16}]}>You're going to delete your 'Account' </Text>
+        </View>
+
+        <View style={styles.DeleteAcoountBtnsContainer}>
+          <TouchableOpacity
+            style={[styles.BottomSheetButton,{width : '30%'}]}
+            onPress={()=>{onAccountNotDelete();}}
+          >
+            <Text style={styles.ButtonText}>No, Keep it</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.BottomSheetButton,{width : '30%', backgroundColor:colors.ErrorColor}]}
+            onPress={()=>{onAccountDelete();}}
+          >
+            <Text style={styles.ButtonText}>Yes, Delete!</Text>
+          </TouchableOpacity>
+        </View>
+      </View> :
+
+
+      <View>
         <View style={styles.BottomSheetTitleContainer}>
           <Text style={styles.BottomSheetTitle}>{title}:</Text>
           <Text style={styles.BottomSheetTitle}>{value}</Text>
         </View>
 
-        <TextInput 
+        <TextInput
           style={styles.BottomSheetInput}
           placeholder={title}
           placeholderTextColor={colors.primaryColor}
@@ -36,7 +72,7 @@ const BottomSheetRenderdComponent: React.FC<Props> = ({ title, value , onDoneFun
           returnKeyType="done"
         />
 
-        <TouchableOpacity style={styles.BottomSheetButton} onPress={()=>{onDoneFun(newValue,title);}}>
+        <TouchableOpacity style={styles.BottomSheetButton} onPress={()=>{onAction(newValue,title);}}>
           <Text style={styles.ButtonText}>Done</Text>
         </TouchableOpacity>
       </View>
@@ -46,16 +82,34 @@ const BottomSheetRenderdComponent: React.FC<Props> = ({ title, value , onDoneFun
 
 const ProfileScreen = () => {
   const bottomSheetRef =  useRef<BottomSheetModal >(null);
-  const snapPoints = useMemo(() => ['25%', '30%' , '35%'], []);
-
+  const [snapPoints, setSnapPoints] = useState(['25%', '30%', '35%']);
   const [userName,setUserName] = useState('Undefined');
   const [phoneNumber,setPhoneNumber] = useState('Undefined');
   const [email,setEmail] = useState('Undefined');
   const [password,setPassword] = useState('Undefined');
 
-
   const [tempVal,setTempVal] = useState('Undefined');
   const [temptitle,setTempTitle] = useState('Undefined');
+
+  useEffect(() => {
+  const onKeyboardShow = () => {
+    setSnapPoints(['40%', '62%', '62%']); // or whatever fits your UI
+  };
+
+  const onKeyboardHide = () => {
+    setSnapPoints(['25%', '30%', '35%']); // your original ones
+  };
+
+  const showSub = Keyboard.addListener('keyboardDidShow', onKeyboardShow);
+  const hideSub = Keyboard.addListener('keyboardDidHide', onKeyboardHide);
+
+  return () => {
+    showSub.remove();
+    hideSub.remove();
+  };
+}, []);
+
+
 
   const openSheet = (title:string)=>{
     setTempTitle(title);
@@ -86,9 +140,8 @@ const ProfileScreen = () => {
     setTempVal('Undefined');
     setTempTitle('Undefined');
     bottomSheetRef.current?.close();
+    Keyboard.dismiss();
   };
-
-
 
 
   return (
@@ -184,7 +237,11 @@ const ProfileScreen = () => {
 
           <View style={styles.infoContainer}>
 
-            <TouchableOpacity style={styles.SingleinfoContainer} activeOpacity={0.5}>
+            <TouchableOpacity
+              style={styles.SingleinfoContainer}
+              activeOpacity={0.5}
+              onPress={()=>{}}
+            >
               <Text style={styles.infoText}>Blocked Users</Text>
               <Icon
               name={'chevron-right'}
@@ -202,7 +259,11 @@ const ProfileScreen = () => {
               />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.SingleinfoContainer} activeOpacity={0.5}>
+            <TouchableOpacity
+              style={styles.SingleinfoContainer}
+              activeOpacity={0.5}
+              onPress={()=>openSheet('Delete Account')}
+              >
               <Text style={styles.infoText}>Delete Account</Text>
               <Icon
               name={'chevron-right'}
@@ -215,7 +276,11 @@ const ProfileScreen = () => {
         </View>
 
 
-        <TouchableOpacity style={styles.Logoutbutton} activeOpacity={0.5} onPress={() => bottomSheetRef.current?.expand()}>
+        <TouchableOpacity
+          style={styles.Logoutbutton}
+          activeOpacity={0.5}
+          onPress={() => bottomSheetRef.current?.expand()}
+        >
               <Text style={styles.ButtonText}>Log out</Text>
               <Icon
               name={'sign-out'}
@@ -236,7 +301,7 @@ const ProfileScreen = () => {
           style={styles.BottomSheetContainer}
         >
           <BottomSheetView >
-            <BottomSheetRenderdComponent title={temptitle} value={tempVal} onDoneFun={onDone}/>
+            <BottomSheetRenderdComponent title={temptitle} value={tempVal} onAction = {onDone} bottomSheetRef = {bottomSheetRef}/>
           </BottomSheetView>
         </BottomSheetModal>
     </SafeAreaView>
@@ -374,6 +439,15 @@ const styles = StyleSheet.create({
     borderRadius:12,
     backgroundColor:colors.primaryColor,
     elevation:5,
+  },
+  WanringiconContainer:{
+    justifyContent:'center',
+    alignItems:'center',
+    paddingTop:'2%',
+  },
+  DeleteAcoountBtnsContainer:{
+    flexDirection:'row',
+    justifyContent:'space-around',
   },
 });
 
