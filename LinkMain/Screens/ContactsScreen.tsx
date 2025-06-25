@@ -167,11 +167,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#edebeb',
     elevation:10,
     fontWeight:'bold',
-    fontSize:17,
-  },
-  headerText: {
-    fontWeight: 'bold',
-    fontSize: 14,
+    fontSize:15,
   },
   azBar: {
   position: 'absolute',
