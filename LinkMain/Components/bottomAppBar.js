@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
     iconsContainer: {
         width: '100%',
         height: '95%',
-        display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',

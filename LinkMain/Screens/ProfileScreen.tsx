@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React,{useRef, useState, useEffect} from 'react';
-import { Image, Keyboard, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Keyboard, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SecondaryTopBar from '../Components/SecondaryTopAppbar';
 import { colors, dimensions } from '../Utils/values';
@@ -29,6 +29,10 @@ const BottomSheetRenderdComponent: React.FC<Props> = ({ title, value , onAction 
     const onAccountNotDelete = () => {
       bottomSheetRef.current?.close();
     };
+
+    const [isEnabled, setIsEnabled] = useState(false);
+
+    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
     return(
 
@@ -59,11 +63,18 @@ const BottomSheetRenderdComponent: React.FC<Props> = ({ title, value , onAction 
         </View>
       </View> :
 
-      //Dark Mood Section
-      title === 'Dark Mood' ?
+      //Dark Mode Section
+      title === 'Dark Mode' ?
       <View>
-        <View style={styles.BottomSheetTitleContainer}>
+        <View style={styles.DarkModeSwitchContainer}>
           <Text style={styles.BottomSheetTitle}>{title}</Text>
+          <Switch
+            trackColor={{ false: colors.TextColor, true: colors.secondary }}
+            thumbColor={ colors.primaryColor}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleSwitch}
+            value={isEnabled}
+          />
         </View>
       </View> :
 
@@ -155,7 +166,7 @@ const ProfileScreen = () => {
 
 
   return (
-    <SafeAreaView style={styles.containe}>
+    <SafeAreaView style={styles.container}>
       <SecondaryTopBar />
       <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: screenHeight * 0.06 }}>
         <View style={styles.ImageContainer}>
@@ -260,7 +271,11 @@ const ProfileScreen = () => {
               />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.SingleinfoContainer} activeOpacity={0.5}>
+            <TouchableOpacity
+              style={styles.SingleinfoContainer}
+              activeOpacity={0.5}
+              onPress={()=>{openSheet('Dark Mode');}}
+            >
               <Text style={styles.infoText}>Dark Mode</Text>
               <Icon
               name={'chevron-right'}
@@ -319,7 +334,7 @@ const ProfileScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  containe:{
+  container:{
     flex: 1,
     backgroundColor: '#fff',
   },
@@ -458,6 +473,16 @@ const styles = StyleSheet.create({
   DeleteAcoountBtnsContainer:{
     flexDirection:'row',
     justifyContent:'space-around',
+  },
+  DarkModeSwitchContainer:{
+    width:'100%',
+    height:screenWidth * 0.118 ,
+    flexDirection:'row',
+    color:colors.primaryColor,
+    justifyContent:'space-between',
+    borderBottomWidth:2,
+    borderColor:'#edebeb',
+    alignItems:'center',
   },
 });
 

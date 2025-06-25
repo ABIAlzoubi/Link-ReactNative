@@ -1,7 +1,5 @@
-/* eslint-disable jsx-quotes */
 import React from 'react';
 import {
-    Dimensions,
     View,
     StyleSheet,
     Text,
@@ -10,9 +8,10 @@ import {
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {colors} from '../Utils/values';
+import { dimensions } from '../Utils/values';
 
-const screenHeight = Dimensions.get('window').height;
-const screenWidth = Dimensions.get('window').width;
+const screenHeight = dimensions.screenHeight;
+const screenWidth = dimensions.screenWidth;
 
 const topAppBar = () => {
     return(
@@ -20,7 +19,12 @@ const topAppBar = () => {
             <View style={styles.container}>
                 <Text style={styles.Title}>Link</Text>
                 <View style={styles.SearchContainer}>
-                    <TextInput numberOfLines={1} multiline={false} placeholderTextColor={colors.TextColor} placeholder='Search...' style={styles.searchInput}/>
+                    <TextInput
+                        numberOfLines={1}
+                        multiline={false}
+                        placeholderTextColor={colors.TextColor}
+                        placeholder="Search..."
+                        style={styles.searchInput}/>
                     <Icon name="search" size={18} color={colors.primaryColor} />
                 </View>
             </View>
