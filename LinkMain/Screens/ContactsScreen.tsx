@@ -14,7 +14,7 @@ const screenWidth = dimensions.screenWidth;
 
 type Contact = {
   name: string;
-  id: string; // Adjust according to your real model
+  id: string;
 };
 
 type SectionData = {
@@ -106,7 +106,7 @@ const ContactsScreen = () => {
         renderSectionHeader={({ section: { title } }) => (
           <Text style={styles.header}>{title}</Text>
         )}
-        contentContainerStyle={{ paddingBottom: screenHeight * 0.05 }}
+        contentContainerStyle={{ paddingBottom: screenHeight * 0.06 }}
       />
 
 
