@@ -23,24 +23,46 @@ const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
 
+type Chat = {
+  chat_id: number;
+  name: string;
+  is_active: number;
+  content: string;
+  sent_at: string;
+};
 
+type ActiveUser = {
+  userID: number;
+  username: string;
+  profilepic: string;
+};
 const HomeScreen = () =>{
     const userId = 1;
     const [playLootie,setPlayLootie] = useState(false);
+    const [chatsList, setChatsList] = useState<Chat[]>([]);
+    const [activeUsersList,setActiveUsersList] = useState<ActiveUser[]>([]);
+
     const [lastIndex,setLastIndex] = useState(chatsList.length - 1);
-    const [chatsList, setChatsList] = useState([]);
-    const [activeUsersList,setActiveUsersList] = useState([]);
 
-   useEffect(() => {
-    const fetchChats = axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllChatsByuserID/${userId}`);
-    setChatsList(fetchChats);
+    const fetchData = async () => {
+    try {
+      const chatResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllChatsByuserID/${userId}`);
+      setChatsList(chatResponse.data);
 
-    const fetchActiveUsers = axios.get(`${API_BASE_URL}/api/HomeScreen/GetActiveUsers/${userId}`);
-    setActiveUsersList(fetchActiveUsers);
+      const activeUsersResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetActiveUsers/${userId}`);
+      setActiveUsersList(activeUsersResponse.data);
+    } catch (error) {
+      console.error('Failed to fetch data:', error);
+    }
+  };
+
+
+    useEffect(() => {
+      fetchData();
     }, []);
 
     const handleDelete = (item:number) => {
-        setChatsList((prev) => prev.filter((chat) => chat.id !== item));
+        setChatsList((prev) => prev.filter((chat) => chat.chat_id !== item));
         setLastIndex(chatsList.length - 1);
     };
 
@@ -54,8 +76,8 @@ const HomeScreen = () =>{
 
         <TopAppBar/>
         <FlatList
-          data={chatsList}
-          keyExtractor={(item) => item.id.toString()}
+          data={activeUsersList}
+          keyExtractor={(item) => item.userID.toString()}
           renderItem={({}) => (
               <TouchableOpacity
                   activeOpacity={1} onPress={() => {}}>
@@ -68,7 +90,7 @@ const HomeScreen = () =>{
 
         <SwipeListView
         data={chatsList}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.chat_id.toString()}
 
         renderItem={({ item }) => (
 
@@ -83,7 +105,7 @@ const HomeScreen = () =>{
         <View style={styles.rowBack}>
             <TouchableOpacity
                 style={[styles.backLeftBtn, styles.backBtn ,{ marginBottom: lastIndex === index ? (screenHeight * 0.0646) : 0 }]}
-                onPress={() => handleArchive(item.id)}
+                onPress={() => handleArchive(item.chat_id)}
             >
             <LottieView
                 source={require('../Assets/Animations/trashAnimation.json')}
@@ -96,7 +118,7 @@ const HomeScreen = () =>{
 
             <TouchableOpacity
                 style={[styles.backRightBtn, styles.backBtn ,{ marginBottom: lastIndex === index ? (screenHeight * 0.0627) : 0 }]}
-                onPress={() => handleDelete(item.id)}
+                onPress={() => handleDelete(item.chat_id)}
             >
             <LottieView
                 source={require('../Assets/Animations/trashAnimation.json')}
