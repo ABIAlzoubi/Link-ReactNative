@@ -23,34 +23,71 @@ const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
 
-type Chat = {
-  chat_id: number;
-  name: string;
-  is_active: string;
-  content: string;
-  sent_at: string;
-};
+
 
 type ActiveUser = {
   userID: number;
   username: string;
   profilepic: string;
 };
+
+type Chat = {
+  chat_id: number;
+  name: string;
+  is_active: string;
+  content: string;
+  sent_at: string;
+  unreaded: number;
+};
+
+
+type NumberOfUnreadedMessages = {
+  chat_id: number;
+  unread_count: number;
+};
+
 const HomeScreen = () =>{
     const userId = 1;
     const [playLootie,setPlayLootie] = useState(false);
+
     const [chatsList, setChatsList] = useState<Chat[]>([]);
     const [activeUsersList,setActiveUsersList] = useState<ActiveUser[]>([]);
+    // const [numberOfUnreaded,setNumberOfUnreaded] = useState<NumberOfUnreadedMessages[]>([]);
 
     const [lastIndex,setLastIndex] = useState(chatsList.length - 1);
+
+
+
+
+
+    function combineUnreadCounts(
+
+      chatsListData:Chat[],
+      numberOfUnreadedMessages: NumberOfUnreadedMessages[]
+      ): Chat[] {
+      const unreadMap = new Map(
+        numberOfUnreadedMessages.map(({ chat_id, unread_count }) => [chat_id, unread_count])
+      );
+
+      return chatsListData.map(chat => ({
+        ...chat,
+        unreaded: unreadMap.get(chat.chat_id) ?? 0,
+      }));
+    }
 
     const fetchData = async () => {
     try {
       const chatResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllChatsByuserID/${userId}`);
-      setChatsList(chatResponse.data);
 
       const activeUsersResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetActiveUsers/${userId}`);
       setActiveUsersList(activeUsersResponse.data);
+
+      const numberOfUnreadedResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllUnreadMessagesCount/${userId}`);
+
+
+    const enriched = combineUnreadCounts(chatResponse.data, numberOfUnreadedResponse.data);
+    setChatsList(enriched);
+
     } catch (error) {
       console.error('Failed to fetch data:', error);
     }
@@ -59,7 +96,15 @@ const HomeScreen = () =>{
 
     useEffect(() => {
       fetchData();
-    }, []);
+    });
+
+    // useEffect(() => {
+    //   if (chatsList.length !== 0 || numberOfUnreaded.length !== 0){
+
+    //   const enrichedChats = combineUnreadCounts(chatsList, numberOfUnreaded);
+    //   setChatsList(enrichedChats);
+    //   }
+    // }, [chatsList, numberOfUnreaded]);
 
     const handleDelete = (item:number) => {
         setChatsList((prev) => prev.filter((chat) => chat.chat_id !== item));
@@ -67,8 +112,8 @@ const HomeScreen = () =>{
     };
 
     const handleArchive = (item:number) => {
-         Alert.alert('Archived', `Chat ${item} archived`);
-         setLastIndex(chatsList.length - 1);
+        Alert.alert('Archived', `Chat ${item} archived`);
+        setLastIndex(chatsList.length - 1);
     };
 
   return(
@@ -95,7 +140,7 @@ const HomeScreen = () =>{
         renderItem={({ item }) => (
             <TouchableOpacity
                 activeOpacity={1} onPress={() => {}} >
-                <ChatListComponent chat={item} />
+                <ChatListComponent chat={item}/>
             </TouchableOpacity>
         )}
 

@@ -5,14 +5,15 @@ const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
 
-
 type Chat = {
   chat_id: number;
   name: string;
   is_active: string;
   content: string;
   sent_at: string;
+  unreaded: number;
 };
+
 const chatListComponent = ({ chat }: { chat: Chat }) => {
     return (
         <View style={styles.container}>
@@ -31,10 +32,12 @@ const chatListComponent = ({ chat }: { chat: Chat }) => {
                 </View>
 
                 <View style={styles.dateContainer}>
-                  <Text numberOfLines={1} style={styles.messageDateText}>{chat.sent_at}</Text>
+                  <Text numberOfLines={1} style={styles.messageDateText}>{chat.sent_at.split(' ')[0]}</Text>
+                  {chat.unreaded === 0 ? <></> :
                   <View style={styles.messageCountContainer}>
-                      <Text style={styles.messageCountText}>1</Text>
+                      <Text style={styles.messageCountText}>{chat.unreaded}</Text>
                   </View>
+                  }
                 </View>
 
             </View>
