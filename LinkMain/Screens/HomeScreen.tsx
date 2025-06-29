@@ -1,5 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import {
     Dimensions,
     StyleSheet,
@@ -16,6 +17,7 @@ import OnlineComponent from '../Components/onlineComponent';
 import TopAppBar from '../Components/topAppBarComponent';
 
 import { SwipeListView } from 'react-native-swipe-list-view';
+import { API_BASE_URL } from '../Utils/NgRockLink';
 import LottieView from 'lottie-react-native';
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
@@ -23,34 +25,28 @@ const screenWidth = Dimensions.get('window').width;
 
 
 const HomeScreen = () =>{
-
+    const userId = 1;
     const [playLootie,setPlayLootie] = useState(false);
-    const [chats, setChats] = useState([
-        { id: 1, name: 'Anas Bassam' },
-        { id: 2, name: 'Sara Ali' },
-        { id: 3, name: 'Bassam Layla' },
-        { id: 4, name: 'Bassam Layla' },
-        { id: 5, name: 'Bassam Layla' },
-        { id: 6, name: 'Bassam Layla' },
-        { id: 7, name: 'Anas Bassam' },
-        { id: 8, name: 'Sara Ali' },
-        { id: 9, name: 'Bassam Layla' },
-        { id: 10, name: 'Bassam Layla' },
-        { id: 11, name: 'Bassam Layla' },
-        { id: 12, name: 'Bassam Layla' },
-    ]);
-    const [lastIndex,setLastIndex] = useState(chats.length - 1);
+    const [lastIndex,setLastIndex] = useState(chatsList.length - 1);
+    const [chatsList, setChatsList] = useState([]);
+    const [activeUsersList,setActiveUsersList] = useState([]);
 
+   useEffect(() => {
+    const fetchChats = axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllChatsByuserID/${userId}`);
+    setChatsList(fetchChats);
 
+    const fetchActiveUsers = axios.get(`${API_BASE_URL}/api/HomeScreen/GetActiveUsers/${userId}`);
+    setActiveUsersList(fetchActiveUsers);
+    }, []);
 
     const handleDelete = (item:number) => {
-        setChats((prev) => prev.filter((chat) => chat.id !== item));
-        setLastIndex(chats.length - 1);
+        setChatsList((prev) => prev.filter((chat) => chat.id !== item));
+        setLastIndex(chatsList.length - 1);
     };
 
     const handleArchive = (item:number) => {
          Alert.alert('Archived', `Chat ${item} archived`);
-         setLastIndex(chats.length - 1);
+         setLastIndex(chatsList.length - 1);
     };
 
   return(
@@ -58,7 +54,7 @@ const HomeScreen = () =>{
 
         <TopAppBar/>
         <FlatList
-          data={chats}
+          data={chatsList}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({}) => (
               <TouchableOpacity
@@ -71,7 +67,7 @@ const HomeScreen = () =>{
         />
 
         <SwipeListView
-        data={chats}
+        data={chatsList}
         keyExtractor={(item) => item.id.toString()}
 
         renderItem={({ item }) => (
