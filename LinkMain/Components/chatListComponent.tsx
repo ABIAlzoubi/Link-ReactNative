@@ -3,28 +3,38 @@ import {Text, View ,StyleSheet, Dimensions, Image } from 'react-native';
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
-const chatListComponent = ({chat}:{ chat: any }) => {
+
+
+
+type Chat = {
+  chat_id: number;
+  name: string;
+  is_active: string;
+  content: string;
+  sent_at: string;
+};
+const chatListComponent = ({ chat }: { chat: Chat }) => {
     return (
         <View style={styles.container}>
             <Image source={require('../Assets/Images/test.png')} style={styles.PrevImage}/>
+
+
+            {chat.is_active.toUpperCase() === 'Y' ? <View style={styles.onlineContainer}/> : <></>}
             <View style={styles.onlineContainer}/>
 
             <View style={styles.detailsContainer}>
 
                 <View style={styles.infoContainer}>
-                    <Text style={styles.nameText}>{chat.id}</Text>
-                    <Text numberOfLines={2} ellipsizeMode="tail" style={styles.messageText}>Hi Anas Bassam
+                    <Text style={styles.nameText}>{chat.name}</Text>
+                    <Text numberOfLines={2} ellipsizeMode="tail" style={styles.messageText}>{chat.content}
                     </Text>
                 </View>
 
                 <View style={styles.dateContainer}>
-
-                <Text numberOfLines={1} style={styles.messageDateText}>25/25/2001</Text>
-
+                  <Text numberOfLines={1} style={styles.messageDateText}>{chat.sent_at}</Text>
                   <View style={styles.messageCountContainer}>
                       <Text style={styles.messageCountText}>1</Text>
                   </View>
-
                 </View>
 
             </View>

@@ -26,7 +26,7 @@ const screenWidth = Dimensions.get('window').width;
 type Chat = {
   chat_id: number;
   name: string;
-  is_active: number;
+  is_active: string;
   content: string;
   sent_at: string;
 };
@@ -93,7 +93,6 @@ const HomeScreen = () =>{
         keyExtractor={(item) => item.chat_id.toString()}
 
         renderItem={({ item }) => (
-
             <TouchableOpacity
                 activeOpacity={1} onPress={() => {}} >
                 <ChatListComponent chat={item} />
