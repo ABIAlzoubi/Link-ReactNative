@@ -9,15 +9,21 @@ type Chat = {
   chat_id: number;
   name: string;
   is_active: string;
+  chat_type: string;
   content: string;
   sent_at: string;
   unreaded: number;
+  profilepic: string;
 };
 
+
 const chatListComponent = ({ chat }: { chat: Chat }) => {
+
+    const d = new Date();
     return (
         <View style={styles.container}>
-            <Image source={require('../Assets/Images/test.png')} style={styles.PrevImage}/>
+
+            <Image source={chat.chat_type === 'group' ? { uri: 'https://cdn.pixabay.com/photo/2016/11/14/17/39/group-1824145_640.png' } : { uri: chat.profilepic }} style={styles.PrevImage}/>
 
 
             {chat.is_active.toUpperCase() === 'Y' ? <View style={styles.onlineContainer}/> : <></>}
@@ -32,7 +38,7 @@ const chatListComponent = ({ chat }: { chat: Chat }) => {
                 </View>
 
                 <View style={styles.dateContainer}>
-                  <Text numberOfLines={1} style={styles.messageDateText}>{chat.sent_at.split(' ')[0]}</Text>
+                  <Text numberOfLines={1} style={styles.messageDateText}>{ d.toISOString().split('T')[0]  === chat.sent_at.split('T')[0] ? chat.sent_at.split('T')[1].substring(0, 5) : chat.sent_at.split('T')[0]}</Text>
                   {chat.unreaded === 0 ? <></> :
                   <View style={styles.messageCountContainer}>
                       <Text style={styles.messageCountText}>{chat.unreaded}</Text>

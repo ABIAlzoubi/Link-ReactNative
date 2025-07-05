@@ -10,13 +10,20 @@ import {
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
-const onlineComponent = () =>
+
+type ActiveUser = {
+  userID: number;
+  username: string;
+  profilepic: string;
+};
+
+const onlineComponent = ({ AcUser }: { AcUser: ActiveUser }) =>
     {
         return(
             <View style={styles.container}>
-                <Image source={require('../Assets/Images/test.png')} style={styles.PrevImage}/>
+                <Image source={{uri: AcUser.profilepic}} style={styles.PrevImage}/>
                 <View style={styles.onlineIcon} />
-                <Text numberOfLines={2}  style={styles.NameText}>Anas Bassam</Text>
+                <Text numberOfLines={2}  style={styles.NameText}>{AcUser.username}</Text>
             </View>
         );
     };

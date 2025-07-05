@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import axios from 'axios';
 import {
     Dimensions,
@@ -19,6 +19,7 @@ import TopAppBar from '../Components/topAppBarComponent';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { API_BASE_URL } from '../Utils/NgRockLink';
 import LottieView from 'lottie-react-native';
+import { useFocusEffect } from '@react-navigation/native';
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
@@ -35,9 +36,11 @@ type Chat = {
   chat_id: number;
   name: string;
   is_active: string;
+  chat_type: string;
   content: string;
   sent_at: string;
   unreaded: number;
+  profilepic: string;
 };
 
 
@@ -52,8 +55,6 @@ const HomeScreen = () =>{
 
     const [chatsList, setChatsList] = useState<Chat[]>([]);
     const [activeUsersList,setActiveUsersList] = useState<ActiveUser[]>([]);
-    // const [numberOfUnreaded,setNumberOfUnreaded] = useState<NumberOfUnreadedMessages[]>([]);
-
     const [lastIndex,setLastIndex] = useState(chatsList.length - 1);
 
 
@@ -75,36 +76,26 @@ const HomeScreen = () =>{
       }));
     }
 
+useFocusEffect(
+  useCallback(() => {
     const fetchData = async () => {
-    try {
-      const chatResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllChatsByuserID/${userId}`);
+      try {
+        const chatResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllChatsByuserID/${userId}`);
+        const activeUsersResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetActiveUsers/${userId}`);
+        const numberOfUnreadedResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllUnreadMessagesCount/${userId}`);
 
-      const activeUsersResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetActiveUsers/${userId}`);
-      setActiveUsersList(activeUsersResponse.data);
+        setActiveUsersList(activeUsersResponse.data);
 
-      const numberOfUnreadedResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllUnreadMessagesCount/${userId}`);
+        const enriched = combineUnreadCounts(chatResponse.data, numberOfUnreadedResponse.data);
+        setChatsList(enriched);
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      }
+    };
 
-
-    const enriched = combineUnreadCounts(chatResponse.data, numberOfUnreadedResponse.data);
-    setChatsList(enriched);
-
-    } catch (error) {
-      console.error('Failed to fetch data:', error);
-    }
-  };
-
-
-    useEffect(() => {
-      fetchData();
-    });
-
-    // useEffect(() => {
-    //   if (chatsList.length !== 0 || numberOfUnreaded.length !== 0){
-
-    //   const enrichedChats = combineUnreadCounts(chatsList, numberOfUnreaded);
-    //   setChatsList(enrichedChats);
-    //   }
-    // }, [chatsList, numberOfUnreaded]);
+    fetchData();
+  }, [userId])
+);
 
     const handleDelete = (item:number) => {
         setChatsList((prev) => prev.filter((chat) => chat.chat_id !== item));
@@ -123,10 +114,10 @@ const HomeScreen = () =>{
         <FlatList
           data={activeUsersList}
           keyExtractor={(item) => item.userID.toString()}
-          renderItem={({}) => (
+          renderItem={({item}) => (
               <TouchableOpacity
                   activeOpacity={1} onPress={() => {}}>
-                  <OnlineComponent/>
+                  <OnlineComponent AcUser={item}/>
               </TouchableOpacity>
           )}
           horizontal
@@ -226,4 +217,5 @@ const styles = StyleSheet.create({
     width:'100%',
   },
 });
+
 
