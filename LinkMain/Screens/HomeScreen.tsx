@@ -218,7 +218,6 @@ const styles = StyleSheet.create({
     maxHeight:screenWidth * 0.23,
     minHeight:screenWidth * 0.23,
     width:'100%',
-    backgroundColor:'red',
   },
 });
 
