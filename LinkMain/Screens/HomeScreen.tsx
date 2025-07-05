@@ -88,6 +88,7 @@ useFocusEffect(
 
         const enriched = combineUnreadCounts(chatResponse.data, numberOfUnreadedResponse.data);
         setChatsList(enriched);
+
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
@@ -127,7 +128,6 @@ useFocusEffect(
         <SwipeListView
         data={chatsList}
         keyExtractor={(item) => item.chat_id.toString()}
-
         renderItem={({ item }) => (
             <TouchableOpacity
                 activeOpacity={1} onPress={() => {}} >
@@ -174,8 +174,9 @@ useFocusEffect(
         closeOnRowPress={true}
         onRowOpen={() => setPlayLootie(true)}
         onRowDidOpen={() => setPlayLootie(false)}
-        contentContainerStyle={{ paddingBottom: screenHeight * 0.05 }}
+        contentContainerStyle={{flexGrow: 1,paddingBottom: screenHeight * 0.05 }}
       />
+
     </SafeAreaView>
     );
 };
@@ -213,8 +214,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   onlineList:{
-    height: screenWidth * 0.3,
+    height: screenWidth * 0.23,
+    maxHeight:screenWidth * 0.23,
+    minHeight:screenWidth * 0.23,
     width:'100%',
+    backgroundColor:'red',
   },
 });
 
