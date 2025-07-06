@@ -20,6 +20,7 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import { API_BASE_URL } from '../Utils/NgRockLink';
 import LottieView from 'lottie-react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { Text } from 'react-native-gesture-handler';
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
@@ -55,7 +56,7 @@ const HomeScreen = () =>{
 
     const [chatsList, setChatsList] = useState<Chat[]>([]);
     const [activeUsersList,setActiveUsersList] = useState<ActiveUser[]>([]);
-    const [lastIndex,setLastIndex] = useState(chatsList.length - 1);
+    const [lastIndex] = useState(chatsList.length - 1);
 
 
 
@@ -100,12 +101,11 @@ useFocusEffect(
 
     const handleDelete = (item:number) => {
         setChatsList((prev) => prev.filter((chat) => chat.chat_id !== item));
-        setLastIndex(chatsList.length - 1);
     };
 
     const handleArchive = (item:number) => {
         Alert.alert('Archived', `Chat ${item} archived`);
-        setLastIndex(chatsList.length - 1);
+
     };
 
   return(
@@ -143,11 +143,12 @@ useFocusEffect(
                 onPress={() => handleArchive(item.chat_id)}
             >
             <LottieView
-                source={require('../Assets/Animations/trashAnimation.json')}
+                source={require('../Assets/Animations/MessageReaded.json')}
                 autoPlay = {playLootie}
                 loop={false}
-                style={{ width: 80, height: 80 }}
+                style={{ width: 50, height: 50 }}
             />
+            <Text style={styles.HiddenItemsTitle}>Unread</Text>
             </TouchableOpacity>
 
 
@@ -159,8 +160,9 @@ useFocusEffect(
                 source={require('../Assets/Animations/trashAnimation.json')}
                 autoPlay = {playLootie}
                 loop={false}
-                style={{ width: 80, height: 80 }}
+                style={{ width: 52, height: 52 }}
             />
+            <Text style={styles.HiddenItemsTitle}>Delete</Text>
             </TouchableOpacity>
 
         </View>
@@ -218,6 +220,11 @@ const styles = StyleSheet.create({
     maxHeight:screenWidth * 0.23,
     minHeight:screenWidth * 0.23,
     width:'100%',
+  },
+  HiddenItemsTitle:{
+    color:'white',
+    fontWeight:'bold',
+    fontSize:12,
   },
 });
 
