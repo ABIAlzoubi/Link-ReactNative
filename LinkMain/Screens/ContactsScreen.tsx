@@ -71,7 +71,7 @@ const ContactsScreen = () => {
     useCallback(() => {
       const fetchData = async () => {
         try {
-          const activeUsersResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetActiveUsers/${userId}`);
+          const activeUsersResponse = await axios.get(`${API_BASE_URL}/api/Contacts/GetAllContacts/${userId}`);
           SetContactsList(activeUsersResponse.data);
 
         } catch (error) {
