@@ -103,7 +103,7 @@ useFocusEffect(
         setChatsList((prev) => prev.filter((chat) => chat.chat_id !== item));
     };
 
-    const handleArchive = (item:number) => {
+    const handleMessageSeen = (item:number) => {
         Alert.alert('Archived', `Chat ${item} archived`);
 
     };
@@ -140,7 +140,7 @@ useFocusEffect(
         <View style={styles.rowBack}>
             <TouchableOpacity
                 style={[styles.backLeftBtn, styles.backBtn ,{ marginBottom: lastIndex === index ? (screenHeight * 0.0646) : 0 }]}
-                onPress={() => handleArchive(item.chat_id)}
+                onPress={() => handleMessageSeen(item.chat_id)}
             >
             <LottieView
                 source={require('../Assets/Animations/MessageReaded.json')}

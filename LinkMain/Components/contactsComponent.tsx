@@ -4,14 +4,24 @@ import {Text, View ,StyleSheet, Dimensions, Image } from 'react-native';
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
-const chatListComponent = () => {
+
+
+
+type Contact = {
+  contacT_USER_ID:string;
+  username: string;
+  profilepic: string;
+};
+
+
+const chatListComponent = ({contact}:{contact:Contact}) => {
     return (
         <View style={styles.container}>
-            <Image source={require('../Assets/Images/test.png')} style={styles.PrevImage}/>
+            <Image source={{uri:contact.profilepic}} style={styles.PrevImage}/>
 
             <View style={styles.detailsContainer}>
 
-                    <Text style={styles.nameText}>Name</Text>
+                    <Text style={styles.nameText}>{contact.username}</Text>
 
             </View>
         </View>

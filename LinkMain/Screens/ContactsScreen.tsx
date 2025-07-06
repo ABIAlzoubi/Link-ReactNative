@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {  SectionList, StyleSheet, Text, TextInput,  TouchableOpacity,  View} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SecondaryTopBar from '../Components/SecondaryTopAppbar';
@@ -6,6 +6,9 @@ import ContactView from '../Components/contactsComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { colors } from '../Utils/values';
 import { dimensions } from '../Utils/values';
+import { useFocusEffect } from '@react-navigation/native';
+import axios from 'axios';
+import { API_BASE_URL } from '../Utils/NgRockLink';
 
 const screenHeight = dimensions.screenHeight;
 const screenWidth = dimensions.screenWidth;
@@ -13,8 +16,9 @@ const screenWidth = dimensions.screenWidth;
 
 
 type Contact = {
-  name: string;
-  id: string;
+  contacT_USER_ID:string;
+  username: string;
+  profilepic: string;
 };
 
 type SectionData = {
@@ -23,34 +27,11 @@ type SectionData = {
 };
 
 
-const contactList: Contact[] = [
-  { id: '1', name: 'Alice' },
-  { id: '2', name: 'Adam' },
-  { id: '3', name: 'Bob' },
-  { id: '4', name: 'Charlie' },
-  { id: '5', name: 'David' },
-  { id: '6', name: 'Daniel' },
-  { id: '7', name: 'Eve' },
-  { id: '8', name: 'Zack' },
-  { id: '9', name: 'Alice' },
-  { id: '10', name: 'Adam' },
-  { id: '11', name: 'Bob' },
-  { id: '12', name: 'Charlie' },
-  { id: '13', name: 'David' },
-  { id: '14', name: 'Daniel' },
-  { id: '15', name: 'Eve' },
-  { id: '16', name: 'Zack' },
-  { id: '17', name: 'Zack' },
-  { id: '18', name: 'Zack' },
-  { id: '19', name: 'Zack' },
-  { id: '20', name: 'alice' },
-];
-
 const groupContactsByLetter = (contacts: Contact[]): SectionData[] => {
   const grouped: { [key: string]: Contact[] } = {};
 
   contacts.forEach(contact => {
-    const letter = contact.name[0].toUpperCase();
+    const letter = contact.username[0].toUpperCase();
     if (!grouped[letter]) {grouped[letter] = [];}
     grouped[letter].push(contact);
   });
@@ -58,7 +39,7 @@ const groupContactsByLetter = (contacts: Contact[]): SectionData[] => {
   const sorted = Object.keys(grouped).sort();
   return sorted.map(letter => ({
     title: letter,
-    data: grouped[letter].sort((a, b) => a.name.localeCompare(b.name)),
+    data: grouped[letter].sort((a, b) => a.username.localeCompare(b.username)),
   }));
 };
 
@@ -67,8 +48,10 @@ const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#'.split('');
 
 
 const ContactsScreen = () => {
+  const userId = 1;
+  const [contactsList,SetContactsList] = useState<Contact[]>([]);
 
-  const sections = groupContactsByLetter(contactList);
+  const sections = groupContactsByLetter(contactsList);
   const sectionListRef = useRef<SectionList<Contact>>(null);
 
   const scrollToSection = (letter:any) => {
@@ -82,6 +65,23 @@ const ContactsScreen = () => {
       });
     }
   };
+
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        try {
+          const activeUsersResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetActiveUsers/${userId}`);
+          SetContactsList(activeUsersResponse.data);
+
+        } catch (error) {
+          console.error('Failed to fetch data:', error);
+        }
+      };
+
+      fetchData();
+    }, [userId])
+  );
 
 
   return (
@@ -101,8 +101,8 @@ const ContactsScreen = () => {
       <SectionList
         ref={sectionListRef}
         sections={sections}
-        keyExtractor={(item) => item.id}
-        renderItem={({}) => <ContactView/>}
+        keyExtractor={(item) => item.contacT_USER_ID}
+        renderItem={({item}) => <ContactView contact={item}/>}
         renderSectionHeader={({ section: { title } }) => (
           <Text style={styles.header}>{title}</Text>
         )}

@@ -13,7 +13,10 @@ import { dimensions } from '../Utils/values';
 const screenHeight = dimensions.screenHeight;
 const screenWidth = dimensions.screenWidth;
 
+
+
 const topAppBar = () => {
+
     return(
         <View style={styles.AppBar}>
             <View style={styles.container}>
@@ -24,7 +27,9 @@ const topAppBar = () => {
                         multiline={false}
                         placeholderTextColor={colors.TextColor}
                         placeholder="Search..."
-                        style={styles.searchInput}/>
+                        style={styles.searchInput}
+                        // onSubmitEditing={(e)=>{}}
+                        />
                     <Icon name="search" size={18} color={colors.primaryColor} />
                 </View>
             </View>
