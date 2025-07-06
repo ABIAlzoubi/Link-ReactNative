@@ -96,6 +96,7 @@ const ContactsScreen = () => {
           placeholder="Search..."
           style={styles.searchInput}/>
           <Icon name="search" size={18} color={colors.primaryColor} />
+          
       </View>
 
       <SectionList
