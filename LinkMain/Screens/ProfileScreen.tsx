@@ -40,7 +40,10 @@ type Props = {
 
 
 const BottomSheetRenderdComponent: React.FC<Props> = ({ title, value , onAction , bottomSheetRef}) => {
-    const [newValue,SetNewVal] = useState(value);
+    const [newValue,SetNewVal] = useState('');
+    useEffect(() => {
+      SetNewVal('');
+    },[value]);
 
     const onAccountDelete = () => {
       bottomSheetRef.current?.close();
@@ -107,8 +110,9 @@ const BottomSheetRenderdComponent: React.FC<Props> = ({ title, value , onAction 
         <TextInput
           style={styles.BottomSheetInput}
           placeholder={title}
+          value={newValue}
           placeholderTextColor={colors.primaryColor}
-          onSubmitEditing={(e) => SetNewVal(e.nativeEvent.text)}
+          onChangeText={(e) => SetNewVal(e)}
           returnKeyType="done"
         />
 
@@ -199,13 +203,29 @@ useFocusEffect(
 
   const onDone = (value:string,title:string)=>{
     if(title === 'User Name')
-      {setUserName(value);}
+    {
+      if(value.trim() !== ''){
+        setUserName(value);
+      }
+    }
     else if(title === 'Phone Number')
-      {setPhoneNumber(value);}
+    {
+      if(value.trim() !== ''){
+        setPhoneNumber(value);
+      }
+    }
     else if(title === 'Email')
-      {setEmail(value);}
+    {
+      if(value.trim() !== ''){
+        setEmail(value);
+      }
+    }
     else if(title === 'Password')
-      {setPassword(value);}
+    {
+      if(value.trim() !== ''){
+      setPassword(value);
+      }
+    }
 
     setTempVal('Undefined');
     setTempTitle('Undefined');
