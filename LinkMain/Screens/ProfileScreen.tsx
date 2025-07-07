@@ -1,16 +1,32 @@
 /* eslint-disable react-native/no-inline-styles */
 import React,{useRef, useState, useEffect, useCallback} from 'react';
-import { Image, Keyboard, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  Keyboard,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View } from 'react-native';
+
 import { SafeAreaView } from 'react-native-safe-area-context';
-import SecondaryTopBar from '../Components/SecondaryTopAppbar';
-import { colors, dimensions } from '../Utils/values';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import axios from 'axios';
+
+import SecondaryTopBar from '../Components/SecondaryTopAppbar';
 import BottomSheetModal , { BottomSheetView }  from '@gorhom/bottom-sheet';
+
+import { colors, dimensions } from '../Utils/values';
 import { TextInput } from 'react-native-gesture-handler';
 import { useFocusEffect } from '@react-navigation/native';
-import axios from 'axios';
+
 import {Asset, ImageLibraryOptions, launchImageLibrary} from 'react-native-image-picker';
 import { API_BASE_URL } from '../Utils/NgRockLink';
+
+
+const screenWidth = dimensions.screenWidth;
+const screenHeight = dimensions.screenHeight;
 
 
 type Props = {
@@ -21,9 +37,6 @@ type Props = {
 };
 
 
-
-const screenWidth = dimensions.screenWidth;
-const screenHeight = dimensions.screenHeight;
 
 
 const BottomSheetRenderdComponent: React.FC<Props> = ({ title, value , onAction , bottomSheetRef}) => {
@@ -95,7 +108,7 @@ const BottomSheetRenderdComponent: React.FC<Props> = ({ title, value , onAction 
           style={styles.BottomSheetInput}
           placeholder={title}
           placeholderTextColor={colors.primaryColor}
-          onChangeText={(val) => SetNewVal(val)}
+          onSubmitEditing={(e) => SetNewVal(e.nativeEvent.text)}
           returnKeyType="done"
         />
 
@@ -512,6 +525,7 @@ const styles = StyleSheet.create({
     height:screenWidth * 0.118,
     borderBottomWidth:2,
     borderColor:'#edebeb',
+    color:colors.primaryColor,
   },
   BottomSheetButton:{
     height:screenWidth * 0.118,
