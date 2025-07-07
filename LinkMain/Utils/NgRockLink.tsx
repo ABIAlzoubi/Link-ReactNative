@@ -3,7 +3,7 @@
 
 
 
-export const API_BASE_URL  = 'https://1b14-5-45-132-67.ngrok-free.app';
+export const API_BASE_URL  = 'https://fb2f-91-186-252-29.ngrok-free.app';
 
 
 export const DEFAULT_HEADERS = {

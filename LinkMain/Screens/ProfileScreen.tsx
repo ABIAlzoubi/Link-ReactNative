@@ -131,12 +131,12 @@ const ProfileScreen = () => {
   const [snapPoints, setSnapPoints] = useState(['25%', '30%', '35%']);
 
 
-  const [userName,setUserName] = useState('Undefined');
-  const [phoneNumber,setPhoneNumber] = useState('Undefined');
-  const [email,setEmail] = useState('Undefined');
-  const [password,setPassword] = useState('Undefined');
-  const [profilePic,setProfilePic] = useState('Undefined');
-  const [createAt,setCreateAt] = useState('Undefined');
+  const [userName,setUserName] = useState('string');
+  const [phoneNumber,setPhoneNumber] = useState('string');
+  const [email,setEmail] = useState('string');
+  const [password,setPassword] = useState('string');
+  const [profilePic,setProfilePic] = useState('string');
+  const [createAt,setCreateAt] = useState('string');
 
   const [tempVal,setTempVal] = useState('Undefined');
   const [temptitle,setTempTitle] = useState('Undefined');
@@ -257,9 +257,22 @@ useFocusEffect(
   });
 };
 
+
+
   return (
     <SafeAreaView style={styles.container}>
-      <SecondaryTopBar />
+
+      <SecondaryTopBar userProfileInfo={{
+    userid: userId,
+    username: userName,
+    phonE_NUMBER: phoneNumber,
+    email: email,
+    hashedpassword: password,
+    profilepic: profilePic,
+    createD_AT: createAt,
+    iS_ACTIVE: 'Y',
+  }}/>
+
       <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: screenHeight * 0.06 }}>
         <View style={styles.ImageContainer}>
           <Image source={{uri:profilePic}}

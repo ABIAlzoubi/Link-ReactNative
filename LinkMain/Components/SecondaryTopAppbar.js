@@ -3,16 +3,41 @@ import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import {dimensions,colors} from '../Utils/values';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation, useRoute } from '@react-navigation/native';
-
+import { API_BASE_URL } from '../Utils/NgRockLink';
+import axios from 'axios';
 
 const screenHeight = dimensions.screenHeight;
 const screenWidth = dimensions.screenWidth;
 
 
-const SecondaryTopAppbar = () =>{
+const SecondaryTopAppbar = ({userProfileInfo}) =>{
     const navigation = useNavigation();
     const route = useRoute();
     const routeName = route.name;
+
+
+    const SaveChanges = async () =>{
+    //   const UpdatedData = {
+    //     userid: userProfileInfo.userId,
+    //     username: userProfileInfo.userName,
+    //     phonE_NUMBER: userProfileInfo.phoneNumber,
+    //     email: userProfileInfo.email,
+    //     hashedpassword: userProfileInfo.password,
+    //     profilepic: userProfileInfo.profilePic,
+    //     createD_AT: userProfileInfo.createAt,
+    //     iS_ACTIVE: 'Y',
+    //     };
+        try{
+        await axios.put(`${API_BASE_URL}/api/Profile/UpdateUserProfile`,userProfileInfo);
+        navigation.navigate('Chats');
+        }
+        catch{
+            console.error("Error updating profile:");
+        }
+    };
+
+
+
     return(
     <View style={styles.Container}>
 
@@ -35,7 +60,7 @@ const SecondaryTopAppbar = () =>{
 
         <TouchableOpacity
             style={styles.titleContainer}
-            onPress={()=>{navigation.navigate('Chats');}}
+            onPress={()=>{routeName === 'Profile' ? SaveChanges() : routeName === 'Contacts' ? navigation.navigate('Chats') : null;}}
         >
             <Text style={styles.iconTitle}>{routeName === 'Profile' ? 'Save' : routeName === 'Contacts' ? 'Done' : null}</Text>
         </TouchableOpacity>
@@ -67,4 +92,5 @@ const styles = StyleSheet.create({
         fontWeight:'bold',
     },
 });
-    export default SecondaryTopAppbar;
+export default SecondaryTopAppbar;
+
