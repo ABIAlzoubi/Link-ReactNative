@@ -9,6 +9,7 @@ import BottomSheetModal , { BottomSheetView }  from '@gorhom/bottom-sheet';
 import { TextInput } from 'react-native-gesture-handler';
 import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
+import {Asset, ImageLibraryOptions, launchImageLibrary} from 'react-native-image-picker';
 import { API_BASE_URL } from '../Utils/NgRockLink';
 
 
@@ -199,6 +200,29 @@ useFocusEffect(
     Keyboard.dismiss();
   };
 
+ const pickImage = () => {
+  const options: ImageLibraryOptions = {
+    mediaType: 'photo',
+    quality: 1,
+    selectionLimit: 1,
+  };
+
+  launchImageLibrary(options, (response) => {
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (response.errorCode) {
+      console.log('ImagePicker Error:', response.errorMessage);
+    } else if (response.assets && response.assets.length > 0) {
+      const image: Asset = response.assets[0];
+
+      if (image.uri && image.fileName && image.type) {
+        setProfilePic(image.uri!);
+      } else {
+        console.error('Invalid image asset');
+      }
+    }
+  });
+};
 
   return (
     <SafeAreaView style={styles.container}>
@@ -211,6 +235,7 @@ useFocusEffect(
           <TouchableOpacity
             style={styles.ChangeImageContainer}
             activeOpacity={0.3}
+            onPress={pickImage}
           >
             <Icon
               name={'camera'}
@@ -280,7 +305,7 @@ useFocusEffect(
 
             <TouchableOpacity style={styles.SingleinfoContainer} activeOpacity={0.5}>
               <Text style={styles.infoText}>Create Date</Text>
-              <Text>{createAt}</Text>
+              <Text>{createAt.split('T')[0]}</Text>
             </TouchableOpacity>
 
 
