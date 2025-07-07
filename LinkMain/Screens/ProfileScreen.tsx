@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React,{useRef, useState, useEffect} from 'react';
+import React,{useRef, useState, useEffect, useCallback} from 'react';
 import { Image, Keyboard, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SecondaryTopBar from '../Components/SecondaryTopAppbar';
@@ -7,6 +7,9 @@ import { colors, dimensions } from '../Utils/values';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import BottomSheetModal , { BottomSheetView }  from '@gorhom/bottom-sheet';
 import { TextInput } from 'react-native-gesture-handler';
+import { useFocusEffect } from '@react-navigation/native';
+import axios from 'axios';
+import { API_BASE_URL } from '../Utils/NgRockLink';
 
 
 type Props = {
@@ -15,6 +18,8 @@ type Props = {
   onAction: (value:string,title:string) => void;
   bottomSheetRef: React.RefObject<BottomSheetModal | null>;
 };
+
+
 
 const screenWidth = dimensions.screenWidth;
 const screenHeight = dimensions.screenHeight;
@@ -102,24 +107,31 @@ const BottomSheetRenderdComponent: React.FC<Props> = ({ title, value , onAction 
 
 
 const ProfileScreen = () => {
+  const userId = 1;
+
   const bottomSheetRef =  useRef<BottomSheetModal >(null);
   const [snapPoints, setSnapPoints] = useState(['25%', '30%', '35%']);
+
+
   const [userName,setUserName] = useState('Undefined');
   const [phoneNumber,setPhoneNumber] = useState('Undefined');
   const [email,setEmail] = useState('Undefined');
   const [password,setPassword] = useState('Undefined');
+  const [profilePic,setProfilePic] = useState('Undefined');
+  const [createAt,setCreateAt] = useState('Undefined');
 
   const [tempVal,setTempVal] = useState('Undefined');
   const [temptitle,setTempTitle] = useState('Undefined');
 
   useEffect(() => {
   const onKeyboardShow = () => {
-    setSnapPoints(['40%', '62%', '62%']); // or whatever fits your UI
+    setSnapPoints(['40%', '62%', '62%']);
   };
 
   const onKeyboardHide = () => {
-    setSnapPoints(['25%', '30%', '35%']); // your original ones
+    setSnapPoints(['25%', '30%', '35%']);
   };
+
 
   const showSub = Keyboard.addListener('keyboardDidShow', onKeyboardShow);
   const hideSub = Keyboard.addListener('keyboardDidHide', onKeyboardHide);
@@ -129,6 +141,29 @@ const ProfileScreen = () => {
     hideSub.remove();
   };
 }, []);
+
+
+
+useFocusEffect(
+  useCallback(() => {
+    const fetchData = async () => {
+      try {
+          const ProfileData = await axios.get(`${API_BASE_URL}/api/Profile/GetUserProfile/${userId}`);
+          setUserName(ProfileData.data.username);
+          setPhoneNumber(ProfileData.data.phonE_NUMBER);
+          setEmail(ProfileData.data.email);
+          setPassword(ProfileData.data.hashedpassword);
+          setProfilePic(ProfileData.data.profilepic);
+          setCreateAt(ProfileData.data.createD_AT);
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      }
+    };
+
+    fetchData();
+  }, [userId])
+);
+
 
 
 
@@ -170,7 +205,7 @@ const ProfileScreen = () => {
       <SecondaryTopBar />
       <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: screenHeight * 0.06 }}>
         <View style={styles.ImageContainer}>
-          <Image source={require('../Assets/Images/test.png')}
+          <Image source={{uri:profilePic}}
           style={styles.image}
           />
           <TouchableOpacity
@@ -245,6 +280,7 @@ const ProfileScreen = () => {
 
             <TouchableOpacity style={styles.SingleinfoContainer} activeOpacity={0.5}>
               <Text style={styles.infoText}>Create Date</Text>
+              <Text>{createAt}</Text>
             </TouchableOpacity>
 
 
