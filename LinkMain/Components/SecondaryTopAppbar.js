@@ -17,22 +17,12 @@ const SecondaryTopAppbar = ({userProfileInfo}) =>{
 
 
     const SaveChanges = async () =>{
-    //   const UpdatedData = {
-    //     userid: userProfileInfo.userId,
-    //     username: userProfileInfo.userName,
-    //     phonE_NUMBER: userProfileInfo.phoneNumber,
-    //     email: userProfileInfo.email,
-    //     hashedpassword: userProfileInfo.password,
-    //     profilepic: userProfileInfo.profilePic,
-    //     createD_AT: userProfileInfo.createAt,
-    //     iS_ACTIVE: 'Y',
-    //     };
         try{
         await axios.put(`${API_BASE_URL}/api/Profile/UpdateUserProfile`,userProfileInfo);
         navigation.navigate('Chats');
         }
         catch{
-            console.error("Error updating profile:");
+            console.error('Error updating profile:');
         }
     };
 
