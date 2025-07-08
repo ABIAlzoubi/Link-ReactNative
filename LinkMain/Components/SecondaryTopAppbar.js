@@ -19,6 +19,9 @@ const SecondaryTopAppbar = ({userProfileInfo}) =>{
     const SaveChanges = async () =>{
         try{
         await axios.put(`${API_BASE_URL}/api/Profile/UpdateUserProfile`,userProfileInfo);
+        await axios.post(`${API_BASE_URL}/api/Profile/UploadProfileImage`, userProfileInfo.formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
         navigation.navigate('Chats');
         }
         catch{

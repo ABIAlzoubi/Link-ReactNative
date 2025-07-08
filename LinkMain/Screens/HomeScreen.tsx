@@ -100,16 +100,19 @@ useFocusEffect(
 
     fetchData();
   }, [userId])
-);
+  );
 
-    const handleDelete = (item:number) => {
-        setChatsList((prev) => prev.filter((chat) => chat.chat_id !== item));
-    };
+  const handleDelete = (item:number) => {
+      setChatsList((prev) => prev.filter((chat) => chat.chat_id !== item));
+  };
+  const handleMessageSeen = (item:number) => {
+      Alert.alert('Archived', `Chat ${item} archived`);
+  };
 
-    const handleMessageSeen = (item:number) => {
-        Alert.alert('Archived', `Chat ${item} archived`);
 
-    };
+  // const SearchUser = async (val:string) =>{
+  //   const response = await axios.get(`${API_BASE_URL}/api/HomeScreen/searchForUser/`)
+  // }
 
   return(
     <SafeAreaView style={styles.safeArea}>
@@ -126,7 +129,7 @@ useFocusEffect(
                   placeholderTextColor={colors.TextColor}
                   placeholder="Search..."
                   style={styles.searchInput}
-                  // onSubmitEditing={(e)=>{}}
+                  onEndEditing={()=>{}}
                   />
               <Icon name="search" size={18} color={colors.primaryColor} />
             </View>

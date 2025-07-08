@@ -21,7 +21,7 @@ import { colors, dimensions } from '../Utils/values';
 import { TextInput } from 'react-native-gesture-handler';
 import { useFocusEffect } from '@react-navigation/native';
 
-import {Asset, ImageLibraryOptions, launchImageLibrary} from 'react-native-image-picker';
+import { Asset, ImageLibraryOptions, launchImageLibrary} from 'react-native-image-picker';
 import { API_BASE_URL } from '../Utils/NgRockLink';
 
 
@@ -140,6 +140,8 @@ const ProfileScreen = () => {
 
   const [tempVal,setTempVal] = useState('Undefined');
   const [temptitle,setTempTitle] = useState('Undefined');
+  const formData = new FormData();
+
 
   useEffect(() => {
   const onKeyboardShow = () => {
@@ -235,14 +237,38 @@ useFocusEffect(
     Keyboard.dismiss();
   };
 
- const pickImage = () => {
+//  const pickImage = () => {
+//   const options: ImageLibraryOptions = {
+//     mediaType: 'photo',
+//     quality: 1,
+//     selectionLimit: 1,
+//   };
+
+//   launchImageLibrary(options, (response) => {
+//     if (response.didCancel) {
+//       console.log('User cancelled image picker');
+//     } else if (response.errorCode) {
+//       console.log('ImagePicker Error:', response.errorMessage);
+//     } else if (response.assets && response.assets.length > 0) {
+//       const image: Asset = response.assets[0];
+
+//       if (image.uri && image.fileName && image.type) {
+//         setProfilePic(image.uri!);
+//       } else {
+//         console.error('Invalid image asset');
+//       }
+//     }
+//   });
+// };
+
+const pickImage = () => {
   const options: ImageLibraryOptions = {
     mediaType: 'photo',
     quality: 1,
     selectionLimit: 1,
   };
 
-  launchImageLibrary(options, (response) => {
+  launchImageLibrary(options, async (response) => {
     if (response.didCancel) {
       console.log('User cancelled image picker');
     } else if (response.errorCode) {
@@ -255,11 +281,22 @@ useFocusEffect(
       } else {
         console.error('Invalid image asset');
       }
-    }
+
+    formData.append('file', {
+      uri: image.uri,
+      name: image.fileName,
+      type: image.type,
+    });
+    formData.append('userId', {userId});
+
+    await axios.post(`${API_BASE_URL}/api/Peofile/UploadProfileImage`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+
+    setProfilePic(image.uri!);
+  }
   });
 };
-
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -272,6 +309,7 @@ useFocusEffect(
     hashedpassword: password,
     profilepic: profilePic,
     createD_AT: createAt,
+    formData,
     iS_ACTIVE: 'Y',
   }}/>
 
