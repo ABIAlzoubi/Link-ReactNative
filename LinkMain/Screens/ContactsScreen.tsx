@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { useCallback, useRef, useState } from 'react';
 import {  SectionList, StyleSheet, Text, TextInput,  TouchableOpacity,  View} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,6 +10,8 @@ import { dimensions } from '../Utils/values';
 import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import { API_BASE_URL } from '../Utils/NgRockLink';
+import LottieView from 'lottie-react-native';
+
 
 const screenHeight = dimensions.screenHeight;
 const screenWidth = dimensions.screenWidth;
@@ -50,9 +53,16 @@ const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#'.split('');
 const ContactsScreen = () => {
   const userId = 1;
   const [contactsList,SetContactsList] = useState<Contact[]>([]);
+  const [searchText, setSearchText] = useState('');
 
-  const sections = groupContactsByLetter(contactsList);
+  const filteredContacts = contactsList.filter(contact =>
+  contact.username.toLowerCase().includes(searchText.toLowerCase())
+  );
+
+const sections = groupContactsByLetter(filteredContacts);
+
   const sectionListRef = useRef<SectionList<Contact>>(null);
+
 
   const scrollToSection = (letter:any) => {
     const index = sections.findIndex((section) => section.title === letter.toUpperCase());
@@ -86,7 +96,7 @@ const ContactsScreen = () => {
 
   return (
     <SafeAreaView style={styles.containe}>
-      <SecondaryTopBar />
+      <SecondaryTopBar userProfileInfo/>
 
       <View style={styles.SearchContainer}>
         <TextInput
@@ -94,21 +104,39 @@ const ContactsScreen = () => {
           multiline={false}
           placeholderTextColor={colors.TextColor}
           placeholder="Search..."
-          style={styles.searchInput}/>
+          style={styles.searchInput}
+          value={searchText}
+          onChangeText={setSearchText}
+          />
           <Icon name="search" size={18} color={colors.primaryColor} />
       </View>
 
-      <SectionList
-        ref={sectionListRef}
-        sections={sections}
-        keyExtractor={(item) => item.contacT_USER_ID}
-        renderItem={({item}) => <ContactView contact={item}/>}
-        renderSectionHeader={({ section: { title } }) => (
-          <Text style={styles.header}>{title}</Text>
-        )}
-        contentContainerStyle={{ paddingBottom: screenHeight * 0.06 }}
+
+    {sections.length === 0 ?
+    <View style={styles.NotFoundContainer}>
+      <LottieView
+        source={require('../Assets/Animations/NotFoundSearchIcon.json')}
+        autoPlay = {true}
+        loop={true}
+        style={{ width: 250, height: 250 ,alignSelf:'center'}}
+
       />
 
+      <Text style={{ textAlign: 'center',color: colors.primaryColor,fontSize:20,fontWeight:'bold' }}>
+        No contacts found.
+      </Text>
+    </View> :
+      <SectionList
+      ref={sectionListRef}
+      sections={sections}
+      keyExtractor={(item) => item.contacT_USER_ID}
+      renderItem={({item}) => <ContactView contact={item}/>}
+      renderSectionHeader={({ section: { title } }) => (
+        <Text style={styles.header}>{title}</Text>
+      )}
+      contentContainerStyle={{ paddingBottom: screenHeight * 0.06 }}
+    />
+    }
 
       <View style={styles.azBar}>
         {alphabet.map((letter) => (
@@ -187,6 +215,15 @@ azLetter: {
     color: colors.backgroundColor,
     marginTop:'3%',
   },
+
+
+NotFoundContainer:{
+  height:'100%',
+  width:'100%',
+  display:'flex',
+  flexDirection:'column',
+  alignContent:'center',
+},
 });
 
 export default ContactsScreen;

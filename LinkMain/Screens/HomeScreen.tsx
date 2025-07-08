@@ -2,7 +2,6 @@
 import React, { useCallback, useState } from 'react';
 import axios from 'axios';
 import {
-    Dimensions,
     StyleSheet,
     TouchableOpacity,
     View,
@@ -21,8 +20,9 @@ import { API_BASE_URL } from '../Utils/NgRockLink';
 import LottieView from 'lottie-react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Text } from 'react-native-gesture-handler';
-const screenHeight = Dimensions.get('window').height;
-const screenWidth = Dimensions.get('window').width;
+import { dimensions as  Dimensions} from '../Utils/values';
+const screenHeight = Dimensions.screenHeight;
+const screenWidth = Dimensions.screenWidth;
 
 
 

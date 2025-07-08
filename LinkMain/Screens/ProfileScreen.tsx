@@ -262,7 +262,7 @@ useFocusEffect(
   return (
     <SafeAreaView style={styles.container}>
 
-      <SecondaryTopBar userProfileInfo={{
+    <SecondaryTopBar userProfileInfo={{
     userid: userId,
     username: userName,
     phonE_NUMBER: phoneNumber,
