@@ -18,10 +18,19 @@ const SecondaryTopAppbar = ({userProfileInfo}) =>{
 
     const SaveChanges = async () =>{
         try{
-        await axios.put(`${API_BASE_URL}/api/Profile/UpdateUserProfile`,userProfileInfo);
-        await axios.post(`${API_BASE_URL}/api/Profile/UploadProfileImage`, userProfileInfo.formData, {
+        if (userProfileInfo.imageFormData) {
+        const ImagePath = await axios.post(
+        `${API_BASE_URL}/api/Profile/UploadProfileImage/${userProfileInfo.userid}`,
+        userProfileInfo.imageFormData,
+        {
             headers: { 'Content-Type': 'multipart/form-data' },
-        });
+        }
+        );
+        userProfileInfo.profilepic = ImagePath.data.imageUrl;
+        }
+        await axios.put(`${API_BASE_URL}/api/Profile/UpdateUserProfile`,userProfileInfo);
+
+
         navigation.navigate('Chats');
         }
         catch{

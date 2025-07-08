@@ -21,7 +21,7 @@ import { colors, dimensions } from '../Utils/values';
 import { TextInput } from 'react-native-gesture-handler';
 import { useFocusEffect } from '@react-navigation/native';
 
-import { Asset, ImageLibraryOptions, launchImageLibrary} from 'react-native-image-picker';
+import { ImageLibraryOptions, launchImageLibrary} from 'react-native-image-picker';
 import { API_BASE_URL } from '../Utils/NgRockLink';
 
 
@@ -140,7 +140,7 @@ const ProfileScreen = () => {
 
   const [tempVal,setTempVal] = useState('Undefined');
   const [temptitle,setTempTitle] = useState('Undefined');
-  const formData = new FormData();
+  const [imageFormData, setImageFormData] = useState<FormData | null>(null);
 
 
   useEffect(() => {
@@ -269,34 +269,29 @@ const pickImage = () => {
   };
 
   launchImageLibrary(options, async (response) => {
-    if (response.didCancel) {
-      console.log('User cancelled image picker');
-    } else if (response.errorCode) {
-      console.log('ImagePicker Error:', response.errorMessage);
-    } else if (response.assets && response.assets.length > 0) {
-      const image: Asset = response.assets[0];
+    if (response.didCancel || response.errorCode) {
+      console.log('ImagePicker Error or cancelled');
+      return;
+    }
 
-      if (image.uri && image.fileName && image.type) {
-        setProfilePic(image.uri!);
-      } else {
-        console.error('Invalid image asset');
-      }
+    const image = response.assets?.[0];
+    if (!image?.uri || !image?.type || !image?.fileName) {
+      console.error('Invalid image asset');
+      return;
+    }
 
+    const formData = new FormData();
     formData.append('file', {
       uri: image.uri,
       name: image.fileName,
       type: image.type,
     });
-    formData.append('userId', {userId});
 
-    await axios.post(`${API_BASE_URL}/api/Peofile/UploadProfileImage`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-
-    setProfilePic(image.uri!);
-  }
+    setImageFormData(formData);
+    setProfilePic(image.uri);
   });
 };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -309,7 +304,7 @@ const pickImage = () => {
     hashedpassword: password,
     profilepic: profilePic,
     createD_AT: createAt,
-    formData,
+    imageFormData,
     iS_ACTIVE: 'Y',
   }}/>
 
