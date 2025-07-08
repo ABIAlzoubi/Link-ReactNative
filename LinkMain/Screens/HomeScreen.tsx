@@ -7,13 +7,14 @@ import {
     View,
     Alert,
     FlatList,
+    TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 import ChatListComponent from '../Components/chatListComponent';
 import OnlineComponent from '../Components/onlineComponent';
-import TopAppBar from '../Components/topAppBarComponent';
+//import TopAppBar from '../Components/topAppBarComponent';
 
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { API_BASE_URL } from '../Utils/NgRockLink';
@@ -24,8 +25,8 @@ import { dimensions as  Dimensions} from '../Utils/values';
 const screenHeight = Dimensions.screenHeight;
 const screenWidth = Dimensions.screenWidth;
 
-
-
+import {colors} from '../Utils/values';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 type ActiveUser = {
   userID: number;
@@ -50,6 +51,7 @@ type NumberOfUnreadedMessages = {
   unread_count: number;
 };
 
+
 const HomeScreen = () =>{
     const userId = 1;
     const [playLootie,setPlayLootie] = useState(false);
@@ -58,6 +60,7 @@ const HomeScreen = () =>{
     const [activeUsersList,setActiveUsersList] = useState<ActiveUser[]>([]);
     const [lastIndex] = useState(chatsList.length - 1);
 
+    // const [searchedList,setSearchedLise] = useState<ActiveUser[]>([]);
 
 
 
@@ -111,7 +114,28 @@ useFocusEffect(
   return(
     <SafeAreaView style={styles.safeArea}>
 
-        <TopAppBar/>
+        {/* <TopAppBar/> */}
+
+        <View style={styles.AppBar}>
+          <View style={styles.container}>
+            <Text style={styles.Title}>Link</Text>
+            <View style={styles.SearchContainer}>
+              <TextInput
+                  numberOfLines={1}
+                  multiline={false}
+                  placeholderTextColor={colors.TextColor}
+                  placeholder="Search..."
+                  style={styles.searchInput}
+                  // onSubmitEditing={(e)=>{}}
+                  />
+              <Icon name="search" size={18} color={colors.primaryColor} />
+            </View>
+          </View>
+        </View>
+
+
+
+
         <FlatList
           data={activeUsersList}
           keyExtractor={(item) => item.userID.toString()}
@@ -125,7 +149,7 @@ useFocusEffect(
           style={styles.onlineList}
         />
 
-        <SwipeListView
+      <SwipeListView
         data={chatsList}
         keyExtractor={(item) => item.chat_id.toString()}
         renderItem={({ item }) => (
@@ -225,6 +249,60 @@ const styles = StyleSheet.create({
     color:'white',
     fontWeight:'bold',
     fontSize:12,
+  },
+
+
+
+
+
+
+
+
+   AppBar:{
+      height: screenHeight * 0.07,
+      width: screenWidth,
+      display:'flex',
+      alignItems:'center',
+      marginBottom:screenWidth * 0.01,
+      paddingHorizontal:screenWidth * 0.02,
+  },
+  container:{
+      height:'100%',
+      width:'100%',
+      display:'flex',
+      flexDirection:'row',
+      justifyContent:'space-between',
+      alignItems:'center',
+  },
+  Title:{
+      fontSize:screenWidth * 0.11,
+      fontWeight: 'bold',
+      fontStyle: 'italic',
+      color: colors.primaryColor,
+  },
+  SearchContainer:{
+      height:screenWidth * 0.11,
+      width:'77%',
+      minWidth:'77%',
+      maxWidth:'77%',
+      display:'flex',
+      flexDirection:'row',
+      alignItems:'center',
+      justifyContent:'space-between',
+      borderColor:'lightgray',
+      borderWidth:1,
+      borderRadius:999,
+      padding:0,
+      paddingHorizontal:screenWidth * 0.03,
+  },
+  searchInput:{
+      fontSize:13,
+      maxWidth:'95%',
+      minWidth:'95%',
+      width:'95%',
+      height:'100%',
+      color:'black',
+      writingDirection: 'auto',
   },
 });
 
