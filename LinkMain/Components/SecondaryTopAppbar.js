@@ -18,20 +18,22 @@ const SecondaryTopAppbar = ({userProfileInfo}) =>{
 
     const SaveChanges = async () =>{
         try{
-        if (userProfileInfo.imageFormData) {
-        const ImagePath = await axios.post(
-        `${API_BASE_URL}/api/Profile/UploadProfileImage/${userProfileInfo.userid}`,
-        userProfileInfo.imageFormData,
-        {
-            headers: { 'Content-Type': 'multipart/form-data' },
-        }
-        );
-        userProfileInfo.profilepic = ImagePath.data.imageUrl;
-        }
-        await axios.put(`${API_BASE_URL}/api/Profile/UpdateUserProfile`,userProfileInfo);
+            const isImageChanged =
+                userProfileInfo.imageFormData &&
+                userProfileInfo.profilepic !== userProfileInfo.initialProfilePic;
+            if(isImageChanged){
+                const ImagePath = await axios.post(
+                `${API_BASE_URL}/api/Profile/UploadProfileImage/${userProfileInfo.userid}`,
+                userProfileInfo.imageFormData,
+                {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                }
+                );
+                userProfileInfo.profilepic = ImagePath.data.imageUrl;
+            }
+            await axios.put(`${API_BASE_URL}/api/Profile/UpdateUserProfile`,userProfileInfo);
 
-
-        navigation.navigate('Chats');
+            navigation.navigate('Chats');
         }
         catch{
             console.error('Error updating profile:');

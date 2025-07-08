@@ -136,6 +136,7 @@ const ProfileScreen = () => {
   const [email,setEmail] = useState('string');
   const [password,setPassword] = useState('string');
   const [profilePic,setProfilePic] = useState('string');
+  const [initialProfilePic,setInitialProfilePic] = useState('string');
   const [createAt,setCreateAt] = useState('string');
 
   const [tempVal,setTempVal] = useState('Undefined');
@@ -177,6 +178,7 @@ useFocusEffect(
           setPassword(ProfileData.data.hashedpassword);
           setProfilePic(ProfileData.data.profilepic);
           setCreateAt(ProfileData.data.createD_AT);
+          setInitialProfilePic(ProfileData.data.profilepic);
       } catch (error) {
         console.error('Failed to fetch data:', error);
       }
@@ -237,29 +239,6 @@ useFocusEffect(
     Keyboard.dismiss();
   };
 
-//  const pickImage = () => {
-//   const options: ImageLibraryOptions = {
-//     mediaType: 'photo',
-//     quality: 1,
-//     selectionLimit: 1,
-//   };
-
-//   launchImageLibrary(options, (response) => {
-//     if (response.didCancel) {
-//       console.log('User cancelled image picker');
-//     } else if (response.errorCode) {
-//       console.log('ImagePicker Error:', response.errorMessage);
-//     } else if (response.assets && response.assets.length > 0) {
-//       const image: Asset = response.assets[0];
-
-//       if (image.uri && image.fileName && image.type) {
-//         setProfilePic(image.uri!);
-//       } else {
-//         console.error('Invalid image asset');
-//       }
-//     }
-//   });
-// };
 
 const pickImage = () => {
   const options: ImageLibraryOptions = {
@@ -305,6 +284,7 @@ const pickImage = () => {
     profilepic: profilePic,
     createD_AT: createAt,
     imageFormData,
+    initialProfilePic:initialProfilePic,
     iS_ACTIVE: 'Y',
   }}/>
 
