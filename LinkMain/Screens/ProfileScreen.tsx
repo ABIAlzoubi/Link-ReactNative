@@ -165,6 +165,8 @@ const ProfileScreen = () => {
 useFocusEffect(
   useCallback(() => {
     const fetchData = async () => {
+
+      bottomSheetRef.current?.close();
       try {
           const ProfileData = await axios.get(`${API_BASE_URL}/api/Profile/GetUserProfile/${userId}`);
           setUserName(ProfileData.data.username);

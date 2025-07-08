@@ -81,6 +81,7 @@ const sections = groupContactsByLetter(filteredContacts);
     useCallback(() => {
       const fetchData = async () => {
         try {
+          setSearchText('');
           const activeUsersResponse = await axios.get(`${API_BASE_URL}/api/Contacts/GetAllContacts/${userId}`);
           SetContactsList(activeUsersResponse.data);
 
