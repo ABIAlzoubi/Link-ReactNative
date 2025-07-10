@@ -5,7 +5,6 @@ import {
     StyleSheet,
     TouchableOpacity,
     View,
-    Alert,
     FlatList,
     TextInput,
     ScrollView,
@@ -41,7 +40,8 @@ type Chat = {
   chat_id: number;
   name: string;
   is_active: string;
-  chat_type: string;
+  message_id : number;
+  chat_type : string;
   content: string;
   sent_at: string;
   unreaded: number;
@@ -138,8 +138,11 @@ const HomeScreen = () =>{
     const handleDelete = (item:number) => {
         setChatsList((prev) => prev.filter((chat) => chat.chat_id !== item));
     };
-    const handleMessageSeen = (item:number) => {
-        Alert.alert('Archived', `Chat ${item} archived`);
+    const handleMessageSeen = (ChatID:number) => {
+        axios.put(`${API_BASE_URL}/api/Messages/MakeMessageSeen/${ChatID}/${userId}`);
+    };
+    const handleMessageUnSeen = (messageID:number) => {
+        axios.put(`${API_BASE_URL}/api/HomeScreen/GetAllChatsByuserID/${messageID}/${userId}`);
     };
 
 
@@ -267,7 +270,11 @@ const HomeScreen = () =>{
         <View style={styles.rowBack}>
             <TouchableOpacity
                 style={[styles.backLeftBtn, styles.backBtn ,{ marginBottom: lastIndex === index ? (screenHeight * 0.0646) : 0 }]}
-                onPress={() => handleMessageSeen(item.chat_id)}
+                onPress={() => {
+                  item.unreaded === 0
+                    ? handleMessageUnSeen(item.message_id)
+                    : handleMessageSeen(item.chat_id);
+                }}
             >
             <LottieView
                 source={require('../Assets/Animations/MessageReaded.json')}
@@ -275,7 +282,7 @@ const HomeScreen = () =>{
                 loop={false}
                 style={{ width: 50, height: 50 }}
             />
-            <Text style={styles.HiddenItemsTitle}>Unread</Text>
+            {item.unreaded === 0 ? <Text style={styles.HiddenItemsTitle}>Unread</Text> : <Text style={styles.HiddenItemsTitle}>Mark as Readed</Text>}
             </TouchableOpacity>
 
 

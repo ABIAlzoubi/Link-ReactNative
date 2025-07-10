@@ -9,6 +9,7 @@ type Chat = {
   chat_id: number;
   name: string;
   is_active: string;
+  message_id : number;
   chat_type: string;
   content: string;
   sent_at: string;
