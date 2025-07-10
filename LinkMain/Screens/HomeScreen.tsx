@@ -144,6 +144,7 @@ const HomeScreen = () =>{
 
 
 
+
   return(
     <SafeAreaView style={styles.safeArea}>
         <View style={styles.AppBar}>
