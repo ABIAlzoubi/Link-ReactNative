@@ -17,7 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ChatListComponent from '../Components/chatListComponent';
 import OnlineComponent from '../Components/onlineComponent';
 import ContacsComponent from '../Components/contactsComponent';
-//import TopAppBar from '../Components/topAppBarComponent';
+
 
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { API_BASE_URL } from '../Utils/NgRockLink';
@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
 
 
 
-   AppBar:{
+  AppBar:{
       height: screenHeight * 0.07,
       width: screenWidth,
       display:'flex',
@@ -411,10 +411,6 @@ const styles = StyleSheet.create({
       height:'100%',
       color:'black',
       writingDirection: 'auto',
-  },
-
-  searchList:{
-
   },
 });
 

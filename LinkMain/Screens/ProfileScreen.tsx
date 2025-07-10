@@ -1,6 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React,{useRef, useState, useEffect, useCallback} from 'react';
 import {
+  ActivityIndicator,
   Image,
   Keyboard,
   ScrollView,
@@ -130,6 +131,7 @@ const ProfileScreen = () => {
   const bottomSheetRef =  useRef<BottomSheetModal >(null);
   const [snapPoints, setSnapPoints] = useState(['25%', '30%', '35%']);
 
+  const [isLoadingData, setIsLoadingData] = useState(false);
 
   const [userName,setUserName] = useState('string');
   const [phoneNumber,setPhoneNumber] = useState('string');
@@ -168,7 +170,7 @@ const ProfileScreen = () => {
 useFocusEffect(
   useCallback(() => {
     const fetchData = async () => {
-
+      setIsLoadingData(true);
       bottomSheetRef.current?.close();
       try {
           const ProfileData = await axios.get(`${API_BASE_URL}/api/Profile/GetUserProfile/${userId}`);
@@ -181,6 +183,8 @@ useFocusEffect(
           setInitialProfilePic(ProfileData.data.profilepic);
       } catch (error) {
         console.error('Failed to fetch data:', error);
+      }finally{
+        setIsLoadingData(false);
       }
     };
 
@@ -287,7 +291,12 @@ const pickImage = () => {
     initialProfilePic:initialProfilePic,
     iS_ACTIVE: 'Y',
   }}/>
-
+    {isLoadingData ? (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height: screenHeight * 0.5 }}>
+        <ActivityIndicator size="large" color={colors.primaryColor} />
+      </View>
+    ) :
+    <>
       <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: screenHeight * 0.06 }}>
         <View style={styles.ImageContainer}>
           <Image source={{uri:profilePic}}
@@ -451,6 +460,8 @@ const pickImage = () => {
             <BottomSheetRenderdComponent title={temptitle} value={tempVal} onAction = {onDone} bottomSheetRef = {bottomSheetRef}/>
           </BottomSheetView>
         </BottomSheetModal>
+      </>
+}
     </SafeAreaView>
   );
 };
