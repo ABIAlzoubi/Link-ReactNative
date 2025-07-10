@@ -141,10 +141,11 @@ const ProfileScreen = () => {
   const [initialProfilePic,setInitialProfilePic] = useState('string');
   const [createAt,setCreateAt] = useState('string');
 
+
   const [tempVal,setTempVal] = useState('Undefined');
   const [temptitle,setTempTitle] = useState('Undefined');
   const [imageFormData, setImageFormData] = useState<FormData | null>(null);
-
+const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
   const onKeyboardShow = () => {
@@ -192,7 +193,9 @@ useFocusEffect(
   }, [userId])
 );
 
-
+useEffect(() => {
+  setImageError(false);
+}, [profilePic]);
 
 
   const openSheet = (title:string)=>{
@@ -275,6 +278,13 @@ const pickImage = () => {
   });
 };
 
+const getSafeImageSource = (url: string) => {
+  if (!url || !url.trim().startsWith('http')) {
+    return require('../Assets/Images/DefaultUserPic.png');
+  }
+  return { uri: url };
+};
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -299,8 +309,10 @@ const pickImage = () => {
     <>
       <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: screenHeight * 0.06 }}>
         <View style={styles.ImageContainer}>
-          <Image source={{uri:profilePic}}
-          style={styles.image}
+          <Image
+            source={imageError ? require('../Assets/Images/DefaultUserPic.png') : getSafeImageSource(profilePic)}
+            onError={() => setImageError(true)}
+            style={styles.image}
           />
           <TouchableOpacity
             style={styles.ChangeImageContainer}

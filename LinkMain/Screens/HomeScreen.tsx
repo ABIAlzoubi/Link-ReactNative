@@ -64,7 +64,7 @@ const HomeScreen = () =>{
     const userId = 1;
     const [playLootie,setPlayLootie] = useState(false);
     const [isLoadingChats, setIsLoadingChats] = useState(false);
-    const [isLoadingSearch, setIsLoadingSearch] = useState(false);
+    const [isLoadingSearch, setIsLoadingSearch] = useState(true);
 
     const [chatsList, setChatsList] = useState<Chat[]>([]);
     const [activeUsersList,setActiveUsersList] = useState<ActiveUser[]>([]);
