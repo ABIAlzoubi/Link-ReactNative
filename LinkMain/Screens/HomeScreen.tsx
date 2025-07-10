@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import axios from 'axios';
 import {
     StyleSheet,
@@ -8,12 +8,15 @@ import {
     Alert,
     FlatList,
     TextInput,
+    ScrollView,
+    ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 import ChatListComponent from '../Components/chatListComponent';
 import OnlineComponent from '../Components/onlineComponent';
+import ContacsComponent from '../Components/contactsComponent';
 //import TopAppBar from '../Components/topAppBarComponent';
 
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -52,18 +55,43 @@ type NumberOfUnreadedMessages = {
 };
 
 
+type Contact = {
+  contacT_USER_ID:string;
+  username: string;
+  profilepic: string;
+};
 const HomeScreen = () =>{
     const userId = 1;
     const [playLootie,setPlayLootie] = useState(false);
+    const [isLoadingSearch, setIsLoadingSearch] = useState(false);
 
     const [chatsList, setChatsList] = useState<Chat[]>([]);
     const [activeUsersList,setActiveUsersList] = useState<ActiveUser[]>([]);
     const [lastIndex] = useState(chatsList.length - 1);
 
-    // const [searchedList,setSearchedLise] = useState<ActiveUser[]>([]);
+    const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+    const [searchValue,setSearchValue] = useState('');
+    const [searchInChatList,setsearchInChatList] = useState<Contact[]>([]);
+    const [searchedList,setSearchedList] = useState<Contact[]>([]);
 
 
+    const Search = async (searchtext:string ) => {
+      setIsLoadingSearch(true);
+      try{
+        const rsponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/searchForUser/${searchtext}`);
+        setSearchedList(rsponse.data);
+      }catch{
 
+      }
+      const filteredChats = chatsList.filter(user => user.name.toLowerCase().includes(searchtext.toLowerCase()));
+      const filter: Contact[] = filteredChats.map(chat => ({
+        contacT_USER_ID: chat.chat_id.toString(),
+        username: chat.name,
+        profilepic: chat.chat_type === 'group' ? 'https://cdn.pixabay.com/photo/2016/11/14/17/39/group-1824145_640.png' : chat.profilepic,
+      }));
+      setsearchInChatList(filter);
+      setIsLoadingSearch(false);
+    };
 
     function combineUnreadCounts(
 
@@ -80,45 +108,40 @@ const HomeScreen = () =>{
       }));
     }
 
-useFocusEffect(
-  useCallback(() => {
-    const fetchData = async () => {
-      try {
-        const chatResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllChatsByuserID/${userId}`);
-        const activeUsersResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetActiveUsers/${userId}`);
-        const numberOfUnreadedResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllUnreadMessagesCount/${userId}`);
+    useFocusEffect(
+    useCallback(() => {
+      setSearchValue('');
+      const fetchData = async () => {
+        try {
+          const chatResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllChatsByuserID/${userId}`);
+          const activeUsersResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetActiveUsers/${userId}`);
+          const numberOfUnreadedResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllUnreadMessagesCount/${userId}`);
 
-        setActiveUsersList(activeUsersResponse.data);
+          setActiveUsersList(activeUsersResponse.data);
 
-        const enriched = combineUnreadCounts(chatResponse.data, numberOfUnreadedResponse.data);
-        setChatsList(enriched);
+          const enriched = combineUnreadCounts(chatResponse.data, numberOfUnreadedResponse.data);
+          setChatsList(enriched);
 
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
-      }
+        } catch (error) {
+          console.error('Failed to fetch data:', error);
+        }
+      };
+
+      fetchData();
+    }, [userId])
+    );
+
+    const handleDelete = (item:number) => {
+        setChatsList((prev) => prev.filter((chat) => chat.chat_id !== item));
+    };
+    const handleMessageSeen = (item:number) => {
+        Alert.alert('Archived', `Chat ${item} archived`);
     };
 
-    fetchData();
-  }, [userId])
-  );
 
-  const handleDelete = (item:number) => {
-      setChatsList((prev) => prev.filter((chat) => chat.chat_id !== item));
-  };
-  const handleMessageSeen = (item:number) => {
-      Alert.alert('Archived', `Chat ${item} archived`);
-  };
-
-
-  // const SearchUser = async (val:string) =>{
-  //   const response = await axios.get(`${API_BASE_URL}/api/HomeScreen/searchForUser/`)
-  // }
 
   return(
     <SafeAreaView style={styles.safeArea}>
-
-        {/* <TopAppBar/> */}
-
         <View style={styles.AppBar}>
           <View style={styles.container}>
             <Text style={styles.Title}>Link</Text>
@@ -128,18 +151,87 @@ useFocusEffect(
                   multiline={false}
                   placeholderTextColor={colors.TextColor}
                   placeholder="Search..."
+                  value = {searchValue}
                   style={styles.searchInput}
-                  onEndEditing={()=>{}}
-                  />
+                  onChangeText={(text) => {
+                    setSearchValue(text);
+                    if (debounceTimeout.current) {
+                      clearTimeout(debounceTimeout.current);
+                    }
+                    debounceTimeout.current = setTimeout(() => {
+                      if (text.trim() === '') {
+                        setsearchInChatList([]);
+                        setSearchedList([]);
+                      } else {
+                        Search(text);
+                      }
+                    }, 400);
+                  }}
+              />
               <Icon name="search" size={18} color={colors.primaryColor} />
             </View>
           </View>
         </View>
 
 
+      {searchValue !== '' ?
+        <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 30 }}>
+          {isLoadingSearch && (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height: screenHeight * 0.5 }}>
+              <ActivityIndicator size="large" color={colors.primaryColor} />
+            </View>
+          )}
+
+          {!isLoadingSearch && searchedList.length === 0 && searchInChatList.length === 0 &&
+          <>
+            <LottieView
+              source={require('../Assets/Animations/NotFoundSearchIcon.json')}
+              autoPlay = {true}
+              loop={true}
+              style={{ width: 250, height: 250 ,alignSelf:'center'}}
+            />
+            <Text style={{ textAlign: 'center',color: colors.primaryColor,fontSize:20,fontWeight:'bold' }}>
+              No contacts found.
+            </Text>
+          </>
+          }
 
 
-        <FlatList
+          {searchInChatList.length > 0 &&
+          <>
+            <Text>Your Chats</Text>
+            <FlatList
+            data={searchInChatList}
+            keyExtractor={(item) => item.contacT_USER_ID}
+            renderItem={({item}) => (
+                <TouchableOpacity
+                    activeOpacity={1} onPress={() => {}}>
+                    <ContacsComponent contact={item}/>
+                </TouchableOpacity>
+            )}
+            scrollEnabled={false}
+            />
+          </>
+          }
+          {searchedList.length > 0 &&
+          <>
+            <Text>Link Users</Text>
+            <FlatList
+              data={searchedList}
+              keyExtractor={(item) => item.contacT_USER_ID}
+              renderItem={({item}) => (
+                  <TouchableOpacity
+                      activeOpacity={1} onPress={() => {}}>
+                      <ContacsComponent contact={item}/>
+                  </TouchableOpacity>
+              )}
+              scrollEnabled={false}
+            /></>
+          }
+
+        </ScrollView> :
+        <>
+          <FlatList
           data={activeUsersList}
           keyExtractor={(item) => item.userID.toString()}
           renderItem={({item}) => (
@@ -204,7 +296,10 @@ useFocusEffect(
         onRowOpen={() => setPlayLootie(true)}
         onRowDidOpen={() => setPlayLootie(false)}
         contentContainerStyle={{flexGrow: 1,paddingBottom: screenHeight * 0.05 }}
-      />
+        />
+        </>
+      }
+
 
     </SafeAreaView>
     );
@@ -247,6 +342,9 @@ const styles = StyleSheet.create({
     maxHeight:screenWidth * 0.23,
     minHeight:screenWidth * 0.23,
     width:'100%',
+    minWidth:'100%',
+    borderColor:'#edebeb',
+    borderBottomWidth:1,
   },
   HiddenItemsTitle:{
     color:'white',
@@ -306,6 +404,10 @@ const styles = StyleSheet.create({
       height:'100%',
       color:'black',
       writingDirection: 'auto',
+  },
+
+  searchList:{
+
   },
 });
 
