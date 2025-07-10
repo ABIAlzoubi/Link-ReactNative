@@ -63,6 +63,7 @@ type Contact = {
 const HomeScreen = () =>{
     const userId = 1;
     const [playLootie,setPlayLootie] = useState(false);
+    const [isLoadingChats, setIsLoadingChats] = useState(false);
     const [isLoadingSearch, setIsLoadingSearch] = useState(false);
 
     const [chatsList, setChatsList] = useState<Chat[]>([]);
@@ -111,6 +112,7 @@ const HomeScreen = () =>{
     useFocusEffect(
     useCallback(() => {
       setSearchValue('');
+      setIsLoadingChats(true);
       const fetchData = async () => {
         try {
           const chatResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllChatsByuserID/${userId}`);
@@ -124,6 +126,8 @@ const HomeScreen = () =>{
 
         } catch (error) {
           console.error('Failed to fetch data:', error);
+        }finally {
+          setIsLoadingChats(false);
         }
       };
 
@@ -173,8 +177,11 @@ const HomeScreen = () =>{
           </View>
         </View>
 
-
-      {searchValue !== '' ?
+    {isLoadingChats ? (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height: screenHeight}}>
+          <ActivityIndicator size="large" color={colors.primaryColor} />
+        </View>
+      ) : searchValue !== '' ?
         <ScrollView contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 30 }}>
           {isLoadingSearch && (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height: screenHeight * 0.5 }}>
