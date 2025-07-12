@@ -113,32 +113,6 @@ const HomeScreen = () =>{
       }));
     }
 
-    // useFocusEffect(
-    // useCallback(() => {
-    //   setSearchValue('');
-    //   setIsLoadingChats(true);
-    //   const fetchData = async () => {
-    //     try {
-    //       const chatResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllChatsByuserID/${userId}`);
-    //       const activeUsersResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetActiveUsers/${userId}`);
-    //       const numberOfUnreadedResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllUnreadMessagesCount/${userId}`);
-
-    //       setActiveUsersList(activeUsersResponse.data);
-
-    //       const enriched = combineUnreadCounts(chatResponse.data, numberOfUnreadedResponse.data);
-    //       setChatsList(enriched);
-
-    //     } catch (error) {
-    //       console.error('Failed to fetch data:', error);
-    //     }finally {
-    //       setIsLoadingChats(false);
-    //     }
-    //   };
-    //   fetchData();
-    // }, [userId])
-    // );
-
-
     const fetchData = useCallback(async () => {
       setSearchValue('');
       setIsLoadingChats(true);
