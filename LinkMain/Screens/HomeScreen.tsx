@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import {
     StyleSheet,
@@ -63,6 +63,9 @@ type Contact = {
 const HomeScreen = () =>{
     const userId = 1;
     const [playLootie,setPlayLootie] = useState(false);
+
+
+
     const [isLoadingChats, setIsLoadingChats] = useState(false);
     const [isLoadingSearch, setIsLoadingSearch] = useState(true);
 
@@ -75,6 +78,7 @@ const HomeScreen = () =>{
     const [searchInChatList,setsearchInChatList] = useState<Contact[]>([]);
     const [searchedList,setSearchedList] = useState<Contact[]>([]);
 
+    const [refreshKey, setRefreshKey] = useState(0);
 
     const Search = async (searchtext:string ) => {
       setIsLoadingSearch(true);
@@ -109,40 +113,81 @@ const HomeScreen = () =>{
       }));
     }
 
-    useFocusEffect(
-    useCallback(() => {
+    // useFocusEffect(
+    // useCallback(() => {
+    //   setSearchValue('');
+    //   setIsLoadingChats(true);
+    //   const fetchData = async () => {
+    //     try {
+    //       const chatResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllChatsByuserID/${userId}`);
+    //       const activeUsersResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetActiveUsers/${userId}`);
+    //       const numberOfUnreadedResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllUnreadMessagesCount/${userId}`);
+
+    //       setActiveUsersList(activeUsersResponse.data);
+
+    //       const enriched = combineUnreadCounts(chatResponse.data, numberOfUnreadedResponse.data);
+    //       setChatsList(enriched);
+
+    //     } catch (error) {
+    //       console.error('Failed to fetch data:', error);
+    //     }finally {
+    //       setIsLoadingChats(false);
+    //     }
+    //   };
+    //   fetchData();
+    // }, [userId])
+    // );
+
+
+    const fetchData = useCallback(async () => {
       setSearchValue('');
       setIsLoadingChats(true);
-      const fetchData = async () => {
-        try {
-          const chatResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllChatsByuserID/${userId}`);
-          const activeUsersResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetActiveUsers/${userId}`);
-          const numberOfUnreadedResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllUnreadMessagesCount/${userId}`);
 
-          setActiveUsersList(activeUsersResponse.data);
+      try {
+        const chatResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllChatsByuserID/${userId}`);
+        const activeUsersResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetActiveUsers/${userId}`);
+        const numberOfUnreadedResponse = await axios.get(`${API_BASE_URL}/api/HomeScreen/GetAllUnreadMessagesCount/${userId}`);
 
-          const enriched = combineUnreadCounts(chatResponse.data, numberOfUnreadedResponse.data);
-          setChatsList(enriched);
+        setActiveUsersList(activeUsersResponse.data);
 
-        } catch (error) {
-          console.error('Failed to fetch data:', error);
-        }finally {
-          setIsLoadingChats(false);
-        }
-      };
+        const enriched = combineUnreadCounts(chatResponse.data, numberOfUnreadedResponse.data);
+        setChatsList(enriched);
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      } finally {
+        setIsLoadingChats(false);
+      }
+    }, [userId]);
 
+
+
+    useFocusEffect(
+      useCallback(() => {
       fetchData();
-    }, [userId])
-    );
+    }, [fetchData]));
+
+    useEffect(() => {
+      fetchData();
+    }, [fetchData, refreshKey]);
 
     const handleDelete = (item:number) => {
-        setChatsList((prev) => prev.filter((chat) => chat.chat_id !== item));
-    };
-    const handleMessageSeen = (ChatID:number) => {
-        axios.put(`${API_BASE_URL}/api/Messages/MakeMessageSeen/${ChatID}/${userId}`);
+      setChatsList((prev) => prev.filter((chat) => chat.chat_id !== item));
     };
     const handleMessageUnSeen = (messageID:number) => {
-        axios.put(`${API_BASE_URL}/api/HomeScreen/GetAllChatsByuserID/${messageID}/${userId}`);
+      axios.put(`${API_BASE_URL}/api/Messages/MakeMessageUnSeen/${messageID}/${userId}`).then(() => {
+      setRefreshKey(prev => prev + 1);
+    })
+    .catch(err => {
+      console.error('Failed to mark as seen:', err);
+    });
+    };
+    const handleMessageSeen = (ChatID:number) => {
+      axios.put(`${API_BASE_URL}/api/Messages/MakeMessageSeen/${ChatID}/${userId}`).then(() => {
+      setRefreshKey(prev => prev + 1);
+    })
+    .catch(err => {
+      console.error('Failed to mark as seen:', err);
+    });
     };
 
 
@@ -282,7 +327,7 @@ const HomeScreen = () =>{
                 loop={false}
                 style={{ width: 50, height: 50 }}
             />
-            {item.unreaded === 0 ? <Text style={styles.HiddenItemsTitle}>Unread</Text> : <Text style={styles.HiddenItemsTitle}>Mark as Readed</Text>}
+            {item.unreaded === 0 ? <Text style={styles.HiddenItemsTitle}>Unread</Text> : <Text style={styles.HiddenItemsTitle}>Read</Text>}
             </TouchableOpacity>
 
 
@@ -308,8 +353,12 @@ const HomeScreen = () =>{
         disableLeftSwipe={false}
         showsVerticalScrollIndicator={false}
         closeOnRowPress={true}
-        onRowOpen={() => setPlayLootie(true)}
-        onRowDidOpen={() => setPlayLootie(false)}
+        onRowOpen={() => {
+          requestAnimationFrame(() => setPlayLootie(true));
+        }}
+        onRowDidOpen={() => {
+          requestAnimationFrame(() => setPlayLootie(false));
+        }}
         contentContainerStyle={{flexGrow: 1,paddingBottom: screenHeight * 0.05 }}
         />
         </>
