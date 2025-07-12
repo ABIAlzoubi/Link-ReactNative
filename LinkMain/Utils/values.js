@@ -8,6 +8,7 @@ export const dimensions  = {
     screenHeight : Dimensions.get('window').height,
 };
 
+export const currentUserID = 1;
 
 export const colors = {
     primaryColor : '#194170',

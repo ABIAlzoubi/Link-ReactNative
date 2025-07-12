@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, View ,StyleSheet, Dimensions, Image } from 'react-native';
-
+import { currentUserID } from '../Utils/values';
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
 
@@ -35,17 +35,18 @@ const chatListComponent = ({ chat }: { chat: Chat }) => {
 
                 <View style={styles.infoContainer}>
                     <Text style={styles.nameText}>{chat.name}</Text>
-                    <Text numberOfLines={2} ellipsizeMode="tail" style={styles.messageText}>{chat.content}
+                    <Text numberOfLines={2} ellipsizeMode="tail" style={styles.messageText}>
+                      {currentUserID === chat.userid ? `You: ${chat.content}` : chat.content}
                     </Text>
                 </View>
 
                 <View style={styles.dateContainer}>
                   <Text numberOfLines={1} style={styles.messageDateText}>{ d.toISOString().split('T')[0]  === chat.sent_at.split('T')[0] ? chat.sent_at.split('T')[1].substring(0, 5) : chat.sent_at.split('T')[0]}</Text>
-                  {chat.unreaded === 0 ? <></> :
-                  <View style={styles.messageCountContainer}>
+                  {chat.unreaded > 0 && (
+                    <View style={styles.messageCountContainer}>
                       <Text style={styles.messageCountText}>{chat.unreaded}</Text>
-                  </View>
-                  }
+                    </View>
+                  )}
                 </View>
 
             </View>

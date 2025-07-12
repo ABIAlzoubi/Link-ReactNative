@@ -24,6 +24,7 @@ import LottieView from 'lottie-react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Text } from 'react-native-gesture-handler';
 import { dimensions as  Dimensions} from '../Utils/values';
+import { currentUserID as userId} from '../Utils/values';
 const screenHeight = Dimensions.screenHeight;
 const screenWidth = Dimensions.screenWidth;
 
@@ -47,6 +48,7 @@ type Chat = {
   userid: number;
   unreaded: number;
   profilepic: string;
+  currentUser: number;
 };
 
 
@@ -62,7 +64,6 @@ type Contact = {
   profilepic: string;
 };
 const HomeScreen = () =>{
-    const userId = 1;
     const [playLootie,setPlayLootie] = useState(false);
 
 
@@ -132,7 +133,7 @@ const HomeScreen = () =>{
       } finally {
         setIsLoadingChats(false);
       }
-    }, [userId]);
+    }, []);
 
 
 
