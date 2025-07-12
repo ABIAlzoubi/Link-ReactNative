@@ -13,6 +13,7 @@ type Chat = {
   chat_type: string;
   content: string;
   sent_at: string;
+  userid: number;
   unreaded: number;
   profilepic: string;
 };
