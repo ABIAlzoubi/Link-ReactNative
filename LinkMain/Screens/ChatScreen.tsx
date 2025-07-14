@@ -23,9 +23,6 @@ import { BlurView } from '@react-native-community/blur';
 const screenHeight = dimensions.screenHeight;
 const screenWidth = dimensions.screenWidth;
 
-type ChatRouteParams = {
-    Chat: { chatID: number };
-};
 
 const sampleMessages: Message[] = [
   {
