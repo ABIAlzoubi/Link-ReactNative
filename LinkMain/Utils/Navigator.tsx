@@ -5,6 +5,7 @@ import React from 'react';
 import ChatsScreen from '../Screens/HomeScreen';
 import ContactsScreen from '../Screens/ContactsScreen';
 import ProfileScreen from '../Screens/ProfileScreen';
+import ChatScreen from '../Screens/ChatScreen';
 
 import BottomAppbar from '../Components/bottomAppBar';
 
@@ -42,6 +43,16 @@ return (
         options={{
             headerShown: false,
             tabBarLabel: () => 'Profile',
+            tabBarIcon: () => null,
+        }}
+    />
+
+    <Tab.Screen
+        name="ChatRoomScreen"
+        component={ChatScreen}
+        options={{
+            headerShown: false,
+            tabBarLabel: () => 'ChatRoom',
             tabBarIcon: () => null,
         }}
     />

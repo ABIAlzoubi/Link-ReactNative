@@ -21,7 +21,7 @@ import ContacsComponent from '../Components/contactsComponent';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { API_BASE_URL } from '../Utils/NgRockLink';
 import LottieView from 'lottie-react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Text } from 'react-native-gesture-handler';
 import { dimensions as  Dimensions} from '../Utils/values';
 import { currentUserID as userId} from '../Utils/values';
@@ -65,7 +65,7 @@ type Contact = {
 };
 const HomeScreen = () =>{
     const [playLootie,setPlayLootie] = useState(false);
-
+    const navigation = useNavigation<any>();
 
 
     const [isLoadingChats, setIsLoadingChats] = useState(false);
@@ -281,7 +281,7 @@ const HomeScreen = () =>{
         keyExtractor={(item) => item.chat_id.toString()}
         renderItem={({ item }) => (
             <TouchableOpacity
-                activeOpacity={1} onPress={() => {}} >
+                activeOpacity={1} onPress={() => navigation.navigate('ChatRoomScreen', { chatID: item.chat_id })} >
                 <ChatListComponent chat={item}/>
             </TouchableOpacity>
         )}

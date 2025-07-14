@@ -14,6 +14,11 @@ const bottmNavWedth = dimensions.screenWidth;
 
 
 const BottomAppbar = ({ state,navigation }) => {
+    const currentRoute = state.routes[state.index].name;
+
+    if (currentRoute === 'ChatRoomScreen') {
+        return null;
+    }
 
     return (
         <View style={styles.container}>
@@ -25,7 +30,7 @@ const BottomAppbar = ({ state,navigation }) => {
                     reducedTransparencyFallbackColor="white"
                 >
                     <View style={styles.iconsContainer}>
-                        {state.routes.map((route, index) => {
+                        {state.routes.filter(route => route.name !== 'ChatRoomScreen').map((route, index) => {
                             const isFocused = state.index === index;
 
 
