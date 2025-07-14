@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useCallback, useRef, useState } from 'react';
-import {  SectionList, StyleSheet, Text, TextInput,  TouchableOpacity,  View} from 'react-native';
+import {  ActivityIndicator, SectionList, StyleSheet, Text, TextInput,  TouchableOpacity,  View} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SecondaryTopBar from '../Components/SecondaryTopAppbar';
 import ContactView from '../Components/contactsComponent';
@@ -10,6 +10,7 @@ import { dimensions } from '../Utils/values';
 import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import { API_BASE_URL } from '../Utils/NgRockLink';
+import { currentUserID as userId } from '../Utils/values';
 import LottieView from 'lottie-react-native';
 
 
@@ -51,9 +52,9 @@ const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#'.split('');
 
 
 const ContactsScreen = () => {
-  const userId = 1;
   const [contactsList,SetContactsList] = useState<Contact[]>([]);
   const [searchText, setSearchText] = useState('');
+  const [isLoading,setIsLodaing] = useState(true);
 
   const filteredContacts = contactsList.filter(contact =>
   contact.username.toLowerCase().includes(searchText.toLowerCase())
@@ -79,19 +80,21 @@ const sections = groupContactsByLetter(filteredContacts);
 
   useFocusEffect(
     useCallback(() => {
+      setIsLodaing(true);
       const fetchData = async () => {
         try {
           setSearchText('');
           const activeUsersResponse = await axios.get(`${API_BASE_URL}/api/Contacts/GetAllContacts/${userId}`);
           SetContactsList(activeUsersResponse.data);
 
+          setIsLodaing(false);
         } catch (error) {
           console.error('Failed to fetch data:', error);
         }
       };
 
       fetchData();
-    }, [userId])
+    }, [])
   );
 
 
@@ -112,41 +115,50 @@ const sections = groupContactsByLetter(filteredContacts);
           <Icon name="search" size={18} color={colors.primaryColor} />
       </View>
 
-
-    {sections.length === 0 ?
-    <View style={styles.NotFoundContainer}>
-      <LottieView
-        source={require('../Assets/Animations/NotFoundSearchIcon.json')}
-        autoPlay = {true}
-        loop={true}
-        style={{ width: 250, height: 250 ,alignSelf:'center'}}
-
-      />
-
-      <Text style={{ textAlign: 'center',color: colors.primaryColor,fontSize:20,fontWeight:'bold' }}>
-        No contacts found.
-      </Text>
-    </View> :
-      <SectionList
-      ref={sectionListRef}
-      sections={sections}
-      keyExtractor={(item) => item.contacT_USER_ID}
-      renderItem={({item}) => <ContactView contact={item}/>}
-      renderSectionHeader={({ section: { title } }) => (
-        <Text style={styles.header}>{title}</Text>
-      )}
-      contentContainerStyle={{ paddingBottom: screenHeight * 0.06 }}
-    />
-    }
-
-      <View style={styles.azBar}>
-        {alphabet.map((letter) => (
-          <TouchableOpacity key={letter} onPress={() => scrollToSection(letter)}>
-            <Text style={styles.azLetter}>{letter}</Text>
-          </TouchableOpacity>
-        ))}
+    {isLoading === true ? (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height: screenHeight }}>
+        <ActivityIndicator size="large" color={colors.primaryColor} />
       </View>
-
+      ) : (
+      sections.length === 0 ? (
+        <View style={styles.NotFoundContainer}>
+          <LottieView
+            source={require('../Assets/Animations/NotFoundSearchIcon.json')}
+            autoPlay={true}
+            loop={true}
+            style={{ width: 250, height: 250, alignSelf: 'center' }}
+          />
+          <Text style={{
+            textAlign: 'center',
+            color: colors.primaryColor,
+            fontSize: 20,
+            fontWeight: 'bold',
+          }}>
+            No contacts found.
+          </Text>
+        </View>
+      ) : (
+        <>
+          <SectionList
+            ref={sectionListRef}
+            sections={sections}
+            keyExtractor={(item) => item.contacT_USER_ID}
+            renderItem={({ item }) => <ContactView contact={item} />}
+            renderSectionHeader={({ section: { title } }) => (
+              <Text style={styles.header}>{title}</Text>
+            )}
+            contentContainerStyle={{ paddingBottom: screenHeight * 0.06 }}
+          />
+          <View style={styles.azBar}>
+            {alphabet.map((letter) => (
+              <TouchableOpacity key={letter} onPress={() => scrollToSection(letter)}>
+                <Text style={styles.azLetter}>{letter}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </>
+      )
+    )}
 
     </SafeAreaView>
   );
