@@ -289,22 +289,52 @@ const HomeScreen = () =>{
 
         renderHiddenItem={({item,index}) => (
         <View style={styles.rowBack}>
+          {userId !== item.userid ? (
             <TouchableOpacity
-                style={[styles.backLeftBtn, styles.backBtn ,{ marginBottom: lastIndex === index ? (screenHeight * 0.0646) : 0 }]}
-                onPress={() => {
-                  item.unreaded === 0
-                    ? handleMessageUnSeen(item.message_id)
-                    : handleMessageSeen(item.chat_id);
-                }}
+              style={[
+                styles.backLeftBtn,
+                styles.backBtn,
+                {
+                  marginBottom: lastIndex === index
+                    ? screenHeight * 0.0646
+                    : 0,
+                },
+              ]}
+              onPress={() => {
+                item.unreaded === 0
+                  ? handleMessageUnSeen(item.message_id)
+                  : handleMessageSeen(item.chat_id);
+              }}
             >
-            <LottieView
+              <LottieView
                 source={require('../Assets/Animations/MessageReaded.json')}
-                autoPlay = {playLootie}
+                autoPlay={playLootie}
                 loop={false}
                 style={{ width: 50, height: 50 }}
-            />
-            {item.unreaded === 0 ? <Text style={styles.HiddenItemsTitle}>Unread</Text> : <Text style={styles.HiddenItemsTitle}>Read</Text>}
+              />
+              <Text style={styles.HiddenItemsTitle}>
+                {item.unreaded === 0 ? 'Unread' : 'Read'}
+              </Text>
             </TouchableOpacity>
+          ) : (
+          <View
+            style={[
+              styles.backLeftBtn,
+              styles.backBtn,
+              {
+                marginBottom: lastIndex === index
+                  ? screenHeight * 0.0646
+                  : 0,
+                justifyContent: 'center',
+                alignItems: 'center',
+              },
+            ]}
+          >
+            <Text style={[styles.HiddenItemsTitle]}>
+              Sent by you
+            </Text>
+          </View>
+        )}
 
 
             <TouchableOpacity
