@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
 // screens/ChatScreen.tsx
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
     FlatList,
     View,
@@ -11,93 +11,57 @@ import {
     KeyboardAvoidingView,
     Platform,
     StyleSheet,
+    ActivityIndicator,
 } from 'react-native';
 import MessageBubble from '../Components/MessageBubble';
 import { Message } from '../Utils/Types';
-import { currentUserID as currentUserId} from '../Utils/values';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { colors, currentUserID as currentUserId} from '../Utils/values';
+import { RouteProp, useFocusEffect, useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { dimensions } from '../Utils/values';
 import { BlurView } from '@react-native-community/blur';
+import { API_BASE_URL } from '../Utils/NgRockLink';
+import axios from 'axios';
 
 const screenHeight = dimensions.screenHeight;
 const screenWidth = dimensions.screenWidth;
 
-
-const sampleMessages: Message[] = [
-  {
-    message_id: 1,
-    content: "Hey, how's it going?",
-    sent_at: new Date().toISOString(),
-    deleted_at: '',
-    is_deleted: 'N',
-    deleter_id: null,
-    reply_to_message_id: null,
-    sender_id: 1001,
-    sender_username: 'Anas',
-    sender_Pic: 'https://example.com/anas.jpg',
-    status: 'seen',
-    status_updated_at: new Date().toISOString(),
-    replayed_Message: null,
-    reactions: [],
-  },
-  {
-    message_id: 2,
-    content: 'All good! You?',
-    sent_at: new Date().toISOString(),
-    deleted_at: '',
-    is_deleted: 'N',
-    deleter_id: null,
-    reply_to_message_id: 1,
-    sender_id: 1002,
-    sender_username: 'Salma',
-    sender_Pic: 'https://example.com/salma.jpg',
-    status: 'delivered',
-    status_updated_at: new Date().toISOString(),
-    replayed_Message: "Hey, how's it going?",
-    reactions: [],
-  },
-  {
-    message_id: 3,
-    content: 'Doing great, thanks for asking.',
-    sent_at: new Date().toISOString(),
-    deleted_at: '',
-    is_deleted: 'N',
-    deleter_id: null,
-    reply_to_message_id: 2,
-    sender_id: 1001,
-    sender_username: 'Anas',
-    sender_Pic: 'https://example.com/anas.jpg',
-    status: 'sent',
-    status_updated_at: new Date().toISOString(),
-    replayed_Message: 'All good! You?',
-    reactions: [
-      {
-        message_id: 3,
-        reaction_type: 'love',
-        reacted_by_user_id: 1002,
-        reacted_by_username: 'Salma',
-        reactor_Pic: 'https://example.com/salma.jpg',
-      },
-    ],
-  },
-];
-
-
+type ChatRouteParams = {
+  ChatRoomScreen: { chatID: number };
+};
 
 const ChatScreen: React.FC = () => {
 
-    const route = useRoute();
-    // const { chatID } = route.params || {};
+    const route = useRoute<RouteProp<ChatRouteParams, 'ChatRoomScreen'>>();
+    const { chatID } = route.params;
 
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const flatListRef = useRef<FlatList<Message>>(null);
+    const [isLoading,setIsLoading] = useState(true);
 
 
-useEffect(() => {
-  setMessages(sampleMessages);
-}, []);
+    const fetchData = useCallback(async () => {
+
+    try {
+        setIsLoading(true);
+        const chatResponse = await axios.get(`${API_BASE_URL}/api/Messages/GetChatMessages/${chatID}`);
+        setMessages(chatResponse.data);
+    } catch (error) {
+        console.error('Failed to fetch data:', error);
+    } finally {
+        setIsLoading(false);
+    }
+    }, [chatID]);
+
+
+    useFocusEffect(
+        useCallback(() => {
+        fetchData();
+    }, [fetchData]));
+
+
+
 
 
 
@@ -122,6 +86,11 @@ return (
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
+        {!isLoading ? (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height: screenHeight * 0.5 }}>
+                <ActivityIndicator size="large" color={colors.primaryColor} />
+            </View>
+        ) : (
         <FlatList
         ref={flatListRef}
         data={messages}
@@ -131,7 +100,8 @@ return (
             <MessageBubble message={item}/>
         )}
         contentContainerStyle={{flexGrow: 1,paddingBottom: screenHeight * 0.1 }}
-        />
+        />)
+        }
         <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
